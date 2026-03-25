@@ -17,7 +17,12 @@ class AppTheme {
         headlineLarge: TextStyle(
           fontFamily: 'Manrope',
           fontWeight: FontWeight.w600,
-          letterSpacing: -0.5,
+          //letterSpacing: -0.5,
+        ),
+        headlineMedium: TextStyle(
+          fontFamily: 'Manrope',
+          fontWeight: FontWeight.w400,
+          //letterSpacing: -0.5,
         ),
         bodyLarge: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w400),
       ),

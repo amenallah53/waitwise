@@ -1,136 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waitwise/core/widgets/custom_appbar.dart';
+import 'package:waitwise/core/widgets/custom_button.dart';
+import 'package:waitwise/core/widgets/custom_text_field.dart';
+import 'package:waitwise/features/onboarding/providers/onboarding_provider.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerWidget {
   const OnboardingScreen({super.key});
 
-  @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
-}
-
-class _OnboardingScreenState extends State<OnboardingScreen> {
-  final nameController = TextEditingController();
-  final thoughtsController = TextEditingController();
-
-  final interests = ["Finance", "Career", "Wellness", "Tech", "Reading"];
-
-  final selected = <String>{};
+  static const _interests = [
+    'Finance',
+    'Career',
+    'Wellness',
+    'Tech',
+    'Reading',
+    'Other',
+  ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(onboardingProvider);
+    final notifier = ref.read(onboardingProvider.notifier);
+
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 40),
+      appBar: CustomAppbar(),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 40),
 
-              /// TITLE (asymmetrical feel)
-              const Text(
-                "Let’s make your\nwaiting time count",
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
-              ),
+                // ── Title ──────────────────────────────────────────────────
+                const Text(
+                  "Let's make your\nwaiting time count",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+                ),
 
-              const SizedBox(height: 32),
+                const SizedBox(height: 32),
 
-              /// NAME INPUT
-              _buildInput(controller: nameController, hint: "Your name"),
+                // ── Name input ─────────────────────────────────────────────
+                CustomTextField(
+                  hintText: 'Your name',
+                  onChanged: notifier.setName,
+                ),
 
-              const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-              /// INTERESTS
-              const Text("What interests you?"),
-
-              const SizedBox(height: 12),
-
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: interests.map((item) {
-                  final isSelected = selected.contains(item);
-
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isSelected ? selected.remove(item) : selected.add(item);
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFFE1BEE7)
-                            : const Color(0xFFF3F3F3),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Text(item),
-                    ),
-                  );
-                }).toList(),
-              ),
-
-              const SizedBox(height: 24),
-
-              /// BACKLOG INPUT
-              _buildInput(
-                controller: thoughtsController,
-                hint: "What's on your mind lately?",
-                maxLines: 3,
-              ),
-
-              const Spacer(),
-
-              /// CTA
-              GestureDetector(
-                onTap: () {
-                  context.go('/home');
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(999),
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF7E0092), Color(0xFF9C27B0)],
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    "Get Started",
-                    style: TextStyle(color: Colors.white),
+                // ── Interests label ────────────────────────────────────────
+                Text(
+                  'What interests you?',
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 14,
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 24),
-            ],
+                const SizedBox(height: 12),
+
+                // ── Interest chips ─────────────────────────────────────────
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: _interests.map((item) {
+                    final isSelected = state.selectedInterests.contains(item);
+
+                    return GestureDetector(
+                      onTap: () => notifier.toggleInterest(item),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFFE1BEE7)
+                              : const Color(0xFFF3F3F3),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Text(item),
+                      ),
+                    );
+                  }).toList(),
+                ),
+
+                const SizedBox(height: 24),
+
+                // ── Thoughts input ─────────────────────────────────────────
+                CustomTextField(
+                  hintText: "What's on your mind lately?",
+                  maxLines: 3,
+                  onChanged: notifier.setThoughts,
+                ),
+
+                const SizedBox(height: 32),
+
+                // ── CTA ────────────────────────────────────────────────────
+                CustomButton(
+                  text: 'Get Started',
+                  onPressed: () => context.go('/home'),
+                ),
+
+                const SizedBox(height: 24),
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildInput({
-    required TextEditingController controller,
-    required String hint,
-    int maxLines = 1,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF3F3F3),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: TextField(
-        controller: controller,
-        maxLines: maxLines,
-        decoration: InputDecoration(hintText: hint, border: InputBorder.none),
       ),
     );
   }
