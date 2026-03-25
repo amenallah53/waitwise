@@ -1,5 +1,6 @@
 //import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:waitwise/features/active_session/screens/active_session_screen.dart';
 import 'package:waitwise/features/onboarding/screens/onboarding_screen.dart';
 
 /*import '../features/onboarding/onboarding_screen.dart';
@@ -15,12 +16,12 @@ final GoRouter appRouter = GoRouter(
     /*GoRoute(
       path: '/home',
       builder: (context, state) => const ContextPickerScreen(),
-    ),
+    ),*/
     GoRoute(
       path: '/session',
       builder: (context, state) => const ActiveSessionScreen(),
     ),
-    GoRoute(
+    /*GoRoute(
       path: '/complete',
       builder: (context, state) => const SessionCompleteScreen(),
     ),

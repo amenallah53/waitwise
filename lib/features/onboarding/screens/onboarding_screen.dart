@@ -102,7 +102,7 @@ class OnboardingScreen extends ConsumerWidget {
                 // ── CTA ────────────────────────────────────────────────────
                 CustomButton(
                   text: 'Get Started',
-                  onPressed: () => context.go('/home'),
+                  onPressed: () => context.go('/session'),
                 ),
 
                 const SizedBox(height: 24),

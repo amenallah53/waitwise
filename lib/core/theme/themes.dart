@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static ThemeData get lightTheme {
@@ -13,18 +14,22 @@ class AppTheme {
         tertiary: const Color(0xFF5D4400),
       ),
 
-      textTheme: const TextTheme(
+      textTheme: TextTheme(
         headlineLarge: TextStyle(
-          fontFamily: 'Manrope',
+          //fontFamily: 'Manrope',
+          fontFamily: GoogleFonts.manrope().fontFamily,
           fontWeight: FontWeight.w600,
           //letterSpacing: -0.5,
         ),
         headlineMedium: TextStyle(
-          fontFamily: 'Manrope',
+          fontFamily: GoogleFonts.manrope().fontFamily,
           fontWeight: FontWeight.w400,
           //letterSpacing: -0.5,
         ),
-        bodyLarge: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w400),
+        bodyLarge: TextStyle(
+          fontFamily: GoogleFonts.inter().fontFamily,
+          fontWeight: FontWeight.w400,
+        ),
       ),
     );
   }
