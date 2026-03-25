@@ -16,6 +16,9 @@ dependencies:
   google_fonts: ^8.0.2
   flutter_native_splash: ^2.4.4
 
+  # environment variables
+  flutter_dotenv: ^5.1.0
+
   # state management
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
@@ -51,6 +54,7 @@ flutter:
 
   assets:
     - assets/images/
+    - .env
 
 flutter_native_splash:
   color: "#9C27B0"

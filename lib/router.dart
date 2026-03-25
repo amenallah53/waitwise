@@ -22,7 +22,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const ActiveSessionScreen(),
     ),
     /*GoRoute(
-      path: '/complete',
+      path: '/session/complete',
       builder: (context, state) => const SessionCompleteScreen(),
     ),
     GoRoute(
