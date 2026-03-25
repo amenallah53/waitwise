@@ -4,7 +4,9 @@ import 'package:waitwise/core/widgets/session_loading_screen.dart';
 import 'package:waitwise/features/active_session/screens/quiz/quiz_screen.dart';
 import 'package:waitwise/features/active_session/screens/reflection/reflection_screen.dart';
 import 'package:waitwise/features/active_session/screens/tasks/tasks_screen.dart';
-import 'package:waitwise/features/active_session/session_type.dart';
+//import 'package:waitwise/features/active_session/session_type.dart';
+
+enum SessionType { reflection, quiz, tasks }
 
 class ActiveSessionScreen extends StatefulWidget {
   const ActiveSessionScreen({super.key});

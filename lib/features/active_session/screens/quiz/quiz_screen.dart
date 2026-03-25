@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:waitwise/features/active_session/providers/quiz_provider.dart';
 
-class QuizScreen extends StatefulWidget {
+class QuizScreen extends ConsumerWidget {
   const QuizScreen({super.key});
 
-  @override
-  State<QuizScreen> createState() => _QuizScreenState();
-}
-
-class _QuizScreenState extends State<QuizScreen> {
-  int? _selectedOption;
-
-  final _options = [
+  static const _options = [
     'To earn more money',
     'To grow my skills and stay relevant',
     'Because my manager told me to',
-    'I\'m not sure yet',
+    "I'm not sure yet",
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(quizProvider);
+    final notifier = ref.read(quizProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Quiz'),
@@ -59,7 +57,7 @@ class _QuizScreenState extends State<QuizScreen> {
               Row(
                 children: [
                   Text(
-                    'Question 1 of 5',
+                    'Question ${state.currentQuestion} of ${state.totalQuestions}',
                     style: Theme.of(
                       context,
                     ).textTheme.bodySmall?.copyWith(color: Colors.grey),
@@ -69,7 +67,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
-                        value: 0.2,
+                        value: state.progress,
                         backgroundColor: const Color(0xFFE0E0E0),
                         color: const Color(0xFF1976D2),
                         minHeight: 6,
@@ -96,10 +94,10 @@ class _QuizScreenState extends State<QuizScreen> {
               ..._options.asMap().entries.map((entry) {
                 final i = entry.key;
                 final text = entry.value;
-                final isSelected = _selectedOption == i;
+                final isSelected = state.selectedOption == i;
 
                 return GestureDetector(
-                  onTap: () => setState(() => _selectedOption = i),
+                  onTap: () => notifier.selectOption(i),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 180),
                     margin: const EdgeInsets.only(bottom: 12),
@@ -152,7 +150,9 @@ class _QuizScreenState extends State<QuizScreen> {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: _selectedOption != null ? () {} : null,
+                  onPressed: state.selectedOption != null
+                      ? notifier.nextQuestion
+                      : null,
                   style: FilledButton.styleFrom(
                     backgroundColor: const Color(0xFF1976D2),
                     disabledBackgroundColor: const Color(0xFFE0E0E0),

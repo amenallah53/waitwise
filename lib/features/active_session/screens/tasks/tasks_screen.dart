@@ -1,24 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:waitwise/features/active_session/providers/tasks_provider.dart';
 
-class TasksScreen extends StatefulWidget {
+class TasksScreen extends ConsumerWidget {
   const TasksScreen({super.key});
 
   @override
-  State<TasksScreen> createState() => _TasksScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(tasksProvider);
+    final notifier = ref.read(tasksProvider.notifier);
 
-class _TasksScreenState extends State<TasksScreen> {
-  final _tasks = [
-    _Task(title: 'Read 5 pages of your current book', done: false),
-    _Task(title: 'Write down 3 things you\'re grateful for', done: false),
-    _Task(title: 'Review your goals for this week', done: false),
-    _Task(title: 'Send that message you\'ve been putting off', done: false),
-  ];
-
-  int get _completedCount => _tasks.where((t) => t.done).length;
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tasks'),
@@ -73,16 +64,16 @@ class _TasksScreenState extends State<TasksScreen> {
                         fit: StackFit.expand,
                         children: [
                           CircularProgressIndicator(
-                            value: _tasks.isEmpty
+                            value: state.tasks.isEmpty
                                 ? 0
-                                : _completedCount / _tasks.length,
+                                : state.completedCount / state.tasks.length,
                             backgroundColor: const Color(0xFFE0E0E0),
                             color: const Color(0xFF43A047),
                             strokeWidth: 5,
                           ),
                           Center(
                             child: Text(
-                              '$_completedCount/${_tasks.length}',
+                              '${state.completedCount}/${state.tasks.length}',
                               style: const TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
@@ -105,7 +96,7 @@ class _TasksScreenState extends State<TasksScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '$_completedCount of ${_tasks.length} tasks done',
+                          '${state.completedCount} of ${state.tasks.length} tasks done',
                           style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 13,
@@ -122,13 +113,13 @@ class _TasksScreenState extends State<TasksScreen> {
               // ── Task list ──────────────────────────────────────────────
               Expanded(
                 child: ListView.separated(
-                  itemCount: _tasks.length,
+                  itemCount: state.tasks.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) {
-                    final task = _tasks[i];
+                    final task = state.tasks[i];
+
                     return GestureDetector(
-                      onTap: () =>
-                          setState(() => _tasks[i] = task.copyWith(!task.done)),
+                      onTap: () => notifier.toggleTask(i),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         padding: const EdgeInsets.symmetric(
@@ -195,11 +186,11 @@ class _TasksScreenState extends State<TasksScreen> {
 
               const SizedBox(height: 20),
 
-              // ── Finish button ──────────────────────────────────────────
+              // ── Complete button ────────────────────────────────────────
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: _completedCount == _tasks.length ? () {} : null,
+                  onPressed: state.allDone ? () {} : null,
                   style: FilledButton.styleFrom(
                     backgroundColor: const Color(0xFF388E3C),
                     disabledBackgroundColor: const Color(0xFFE0E0E0),
@@ -219,11 +210,4 @@ class _TasksScreenState extends State<TasksScreen> {
       ),
     );
   }
-}
-
-class _Task {
-  final String title;
-  final bool done;
-  const _Task({required this.title, required this.done});
-  _Task copyWith(bool done) => _Task(title: title, done: done);
 }

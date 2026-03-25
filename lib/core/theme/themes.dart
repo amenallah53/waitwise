@@ -12,6 +12,8 @@ class AppTheme {
         primary: const Color(0xFF7E0092),
         secondary: const Color(0xFF006A60),
         tertiary: const Color(0xFF5D4400),
+        onPrimary: Colors.white,
+        onSurface: const Color(0xFF1A1C1C),
       ),
 
       textTheme: TextTheme(
