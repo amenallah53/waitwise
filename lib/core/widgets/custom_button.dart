@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
+  final Icon? icon;
 
-  const CustomButton({super.key, required this.text, required this.onPressed});
+  const CustomButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.icon = const Icon(Icons.arrow_forward, color: Colors.white, size: 24),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +52,7 @@ class CustomButton extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            const Icon(Icons.arrow_forward, color: Colors.white, size: 24),
+            this.icon!,
           ],
         ),
       ),
