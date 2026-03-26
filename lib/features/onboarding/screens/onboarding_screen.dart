@@ -222,7 +222,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   decoration: BoxDecoration(color: Colors.transparent),
                   child: CustomButton(
                     text: 'Get Started',
-                    onPressed: () => context.go('/session'),
+                    onPressed: () => context.go('/home'),
                   ),
                 ),
               ),
