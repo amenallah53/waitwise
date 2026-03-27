@@ -45,6 +45,8 @@ class CustomTextField extends StatelessWidget {
             controller: controller,
             obscureText: obscureText,
             onChanged: onChanged,
+            textDirection: TextDirection.ltr,
+            textAlign: TextAlign.left,
             style: theme.textTheme.bodyLarge,
             decoration: InputDecoration(
               hintText: hintText,

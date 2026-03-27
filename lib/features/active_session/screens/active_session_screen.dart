@@ -36,6 +36,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
     if (!mounted) return;
     setState(() {
       _sessionType = random;
+      _sessionType = SessionType.reflection; // hardcode for testing
       _isLoading = false;
     });
   }

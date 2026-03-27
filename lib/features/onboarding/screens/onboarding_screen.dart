@@ -13,9 +13,26 @@ class OnboardingScreen extends ConsumerStatefulWidget {
   ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
+// ── Section label helper ─────────────────────────────────────────────
+Widget _sectionLabel(BuildContext context, String text) {
+  return Text(
+    text,
+    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+      fontSize: 12,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 1,
+      color: Theme.of(context).colorScheme.primary,
+    ),
+  );
+}
+
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _scrollController = ScrollController();
+
   bool _showButton = false;
+  bool showCustomInput = false;
+
+  final TextEditingController customController = TextEditingController();
 
   static const _scrollThreshold = 80.0;
 
@@ -38,6 +55,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    customController.dispose();
     super.dispose();
   }
 
@@ -53,11 +71,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final state = ref.watch(onboardingProvider);
     final notifier = ref.read(onboardingProvider.notifier);
 
+    // 🔥 merge default + custom interests
+    final allInterests = [..._interests, ...state.customInterests];
+
     return Scaffold(
-      appBar: CustomAppbar(),
+      appBar: const CustomAppbar(),
       body: Stack(
         children: [
-          // ── Scrollable content ───────────────────────────────────────────
+          // ── Scrollable content ─────────────────────────────
           SingleChildScrollView(
             controller: _scrollController,
             child: SafeArea(
@@ -66,138 +87,187 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 24),
 
-                    // ── Title ────────────────────────────────────────────
-                    const Text(
-                      "Let's make your\nwaiting time count",
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w600,
+                    // ── Title ─────────────────────────────
+                    RichText(
+                      text: TextSpan(
+                        style: Theme.of(context).textTheme.headlineLarge
+                            ?.copyWith(fontSize: 26, color: Colors.black),
+                        children: [
+                          const TextSpan(text: "Design your\nperfect "),
+                          TextSpan(
+                            text: "interval.",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // ── Name input ───────────────────────────────────────
-                    CustomTextField(
-                      hintText: 'Your name',
-                      onChanged: notifier.setName,
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // ── Interests label ──────────────────────────────────
-                    Text(
-                      'What interests you?',
-                      style: Theme.of(context).textTheme.headlineLarge
-                          ?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 14,
-                          ),
-                    ),
-
-                    // ── Name input ───────────────────────────────────────
-                    CustomTextField(
-                      hintText: 'Your name',
-                      onChanged: notifier.setName,
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // ── Interests label ──────────────────────────────────
-                    Text(
-                      'What interests you?',
-                      style: Theme.of(context).textTheme.headlineLarge
-                          ?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 14,
-                          ),
-                    ),
-
-                    // ── Name input ───────────────────────────────────────
-                    CustomTextField(
-                      hintText: 'Your name',
-                      onChanged: notifier.setName,
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // ── Interests label ──────────────────────────────────
-                    Text(
-                      'What interests you?',
-                      style: Theme.of(context).textTheme.headlineLarge
-                          ?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 14,
-                          ),
                     ),
 
                     const SizedBox(height: 12),
 
-                    // ── Interest chips ───────────────────────────────────
+                    // ── Subtitle ─────────────────────────
+                    Text(
+                      "Let’s set up your space for mindful growth and intentional waiting.",
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+                    ),
+
+                    const SizedBox(height: 28),
+
+                    // ── Name ─────────────────────────────
+                    _sectionLabel(context, "WHAT'S YOUR NAME?"),
+                    const SizedBox(height: 8),
+
+                    CustomTextField(
+                      hintText: 'e.g. Alex',
+                      onChanged: notifier.setName,
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // ── Interests ────────────────────────
+                    _sectionLabel(context, "CHOOSE YOUR FOCUS AREAS"),
+                    const SizedBox(height: 12),
+
                     Wrap(
                       spacing: 10,
                       runSpacing: 10,
-                      children: _interests.map((item) {
+                      children: allInterests.map((item) {
                         final isSelected = state.selectedInterests.contains(
                           item,
                         );
 
                         return GestureDetector(
-                          onTap: () => notifier.toggleInterest(item),
+                          onTap: () {
+                            if (item == "Other") {
+                              setState(() => showCustomInput = true);
+                            } else {
+                              notifier.toggleInterest(item);
+                            }
+                          },
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
+                              horizontal: 18,
+                              vertical: 10,
                             ),
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? Theme.of(context).colorScheme.primary
-                                  : const Color(0xFFF3F3F3),
-                              borderRadius: BorderRadius.circular(9999),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.primary.withOpacity(0.4),
-                                        offset: const Offset(0, 4),
-                                        blurRadius: 12,
-                                      ),
-                                    ]
-                                  : [],
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: isSelected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Colors.grey.shade300,
+                              ),
                             ),
                             child: Text(
                               item,
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(
-                                    fontSize: 16,
-                                    color: isSelected
-                                        ? Theme.of(
-                                            context,
-                                          ).colorScheme.onPrimary
-                                        : Theme.of(
-                                            context,
-                                          ).colorScheme.onSurface,
-                                  ),
+                              style: TextStyle(
+                                color: isSelected
+                                    ? Colors.white
+                                    : Colors.black87,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         );
                       }).toList(),
                     ),
 
+                    // ── Custom input (Other) ─────────────
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: showCustomInput
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 16),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: CustomTextField(
+                                      hintText: "Your custom focus...",
+                                      controller: customController,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      final value = customController.text;
+
+                                      if (value.trim().isEmpty) return;
+
+                                      notifier.addCustomInterest(value);
+
+                                      customController.clear();
+
+                                      setState(() => showCustomInput = false);
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(14),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : const SizedBox(),
+                    ),
+
                     const SizedBox(height: 24),
 
-                    // ── Thoughts input ───────────────────────────────────
+                    // ── Thoughts ─────────────────────────
+                    _sectionLabel(context, "WHAT'S ON YOUR MIND LATELY?"),
+                    const SizedBox(height: 8),
+
                     CustomTextField(
-                      hintText: "What's on your mind lately?",
-                      maxLines: 5,
+                      hintText:
+                          "Ideas, projects, or tasks you're been putting off...",
+                      maxLines: 4,
                       onChanged: notifier.setThoughts,
                     ),
 
-                    // Extra space so last field isn't hidden behind button
+                    const SizedBox(height: 24),
+
+                    // ── Image ────────────────────────────
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: Image.asset(
+                        "assets/images/onboarding_room.jpg",
+                        height: 160,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // ── Footer ───────────────────────────
+                    Center(
+                      child: Text(
+                        "You can change these preferences at any time in your Dashboard.",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+
                     const SizedBox(height: 120),
                   ],
                 ),
@@ -205,7 +275,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
           ),
 
-          // ── Slide-up button overlay ──────────────────────────────────────
+          // ── Bottom button ─────────────────────────────
           Positioned(
             left: 0,
             right: 0,
@@ -219,10 +289,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 opacity: _showButton ? 1.0 : 0.0,
                 child: Container(
                   padding: const EdgeInsets.fromLTRB(24, 12, 24, 36),
-                  decoration: BoxDecoration(color: Colors.transparent),
                   child: CustomButton(
                     text: 'Get Started',
-                    onPressed: () => context.go('/home'),
+                    onPressed: () {
+                      context.go('/home');
+                    },
                   ),
                 ),
               ),
