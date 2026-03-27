@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:waitwise/core/widgets/custom_appbar.dart';
+import 'package:waitwise/data/models/session_model.dart';
 import 'package:waitwise/features/active_session/providers/tasks_provider.dart';
 
 class TasksScreen extends ConsumerWidget {
-  const TasksScreen({super.key});
+  const TasksScreen({super.key, required TaskSession session});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -11,11 +13,7 @@ class TasksScreen extends ConsumerWidget {
     final notifier = ref.read(tasksProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tasks'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      appBar: CustomAppbar(needToShowBack: true),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
