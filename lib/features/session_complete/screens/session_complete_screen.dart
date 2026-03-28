@@ -2,118 +2,250 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:waitwise/features/session_complete/providers/session_complete_provider.dart';
 import 'package:waitwise/core/widgets/custom_appbar.dart';
+import 'package:waitwise/core/widgets/custom_button.dart';
+import 'package:waitwise/features/user_backlogs/providers/user_backlogs_provider.dart';
+import 'package:go_router/go_router.dart';
 
-class SessionCompleteScreen extends ConsumerWidget {
+class SessionCompleteScreen extends ConsumerStatefulWidget {
   const SessionCompleteScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SessionCompleteScreen> createState() =>
+      _SessionCompleteScreenState();
+}
+
+class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
+  late TextEditingController _localController;
+
+  @override
+  void initState() {
+    super.initState();
+    _localController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _localController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(sessionCompleteProvider);
-    final notifier = ref.read(sessionCompleteProvider.notifier);
+    final notifier = ref.read(backlogProvider.notifier);
     final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
+    final scheme = theme.colorScheme;
 
     return Scaffold(
       appBar: const CustomAppbar(),
-      //ScrollChildView
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
-              // ── Top icon with shadow ──────────────────
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [primary, primary.withOpacity(0.75)],
+              // ── Top Icon Container ──────────────────────
+              Center(
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: scheme.primary,
+                    boxShadow: [
+                      BoxShadow(
+                        color: scheme.primary.withOpacity(0.25),
+                        blurRadius: 30,
+                        spreadRadius: 8,
+                      ),
+                    ],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: primary.withOpacity(0.35),
-                      blurRadius: 24,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 8),
-                    ),
-                    BoxShadow(
-                      color: primary.withOpacity(0.15),
-                      blurRadius: 8,
-                      spreadRadius: 0,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.check_rounded,
-                  color: Colors.white,
-                  size: 38,
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ── Headline ─────────────────────────────
-              Text(
-                "${state.minutesSpent} minutes well spent!",
-                textAlign: TextAlign.center,
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: theme.colorScheme.onSurface,
-                  height: 1.2,
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              Text(
-                "You've reclaimed your time. Great focus during this interval.",
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[500],
-                  height: 1.4,
+                  child: Icon(
+                    Icons.check_circle_outline_rounded,
+                    color: scheme.onPrimary,
+                    size: 48,
+                  ),
                 ),
               ),
 
               const SizedBox(height: 28),
 
-              // ── Sessions this week ───────────────────
-              _InfoCard(
-                icon: Icons.calendar_today_outlined,
-                label: "SESSIONS THIS WEEK",
-                value: "${state.sessionsThisWeek}",
+              Text(
+                "${state.minutesSpent} minutes well spent!",
+                textAlign: TextAlign.center,
+                style: theme.textTheme.headlineLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 28,
+                  color: scheme.onSurface,
+                ),
               ),
 
               const SizedBox(height: 12),
 
-              // ── Current streak ───────────────────────
+              Text(
+                "You've reclaimed your time. Great focus\nduring this interval.",
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: scheme.onSurface.withOpacity(0.5),
+                  height: 1.5,
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
               _InfoCard(
-                icon: Icons.local_fire_department_outlined,
+                icon: Icons.calendar_today_rounded,
+                accentColor: scheme.secondary,
+                label: "SESSIONS THIS WEEK",
+                value: "${state.sessionsThisWeek}",
+              ),
+
+              const SizedBox(height: 16),
+
+              _InfoCard(
+                icon: Icons.local_fire_department_rounded,
+                accentColor: scheme.tertiary,
                 label: "CURRENT STREAK",
                 value: "${state.currentStreak} days",
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
-              // ── Backlog input ────────────────────────
-              _BacklogInput(primary: primary, notifier: notifier),
+              // ── Backlog Input Card (Integrated) ──────────
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 32,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(32),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Anything to add to your\nbacklog after this session?",
+                      style: theme.textTheme.headlineLarge?.copyWith(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: theme.colorScheme.onSurface,
+                        height: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
 
-              const Spacer(),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF3F3F3),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment
+                            .end, //aligns button with text field to the end as field  grows
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _localController,
+                              minLines: 3,
+                              maxLines: 5,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                fontSize: 14,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: "Ideas, tasks, or follow-ups...",
+                                hintStyle: TextStyle(
+                                  fontFamily:
+                                      theme.textTheme.bodyLarge?.fontFamily,
+                                  color: Colors.grey.withOpacity(0.6),
+                                  fontSize: 14,
+                                ),
+                                border: InputBorder.none,
+                                // Increased vertical padding increases the perceived height
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical:
+                                      30, // fixed height to prevent jump when adding lines
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              right: 12.0,
+                              bottom: 12.0,
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (_localController.text.isNotEmpty) {
+                                  notifier.addItem(_localController.text);
+                                  _localController.clear();
 
-              // ── Back to Home button ──────────────────
-              _HomeButton(
-                primary: primary,
-                onPressed: () => Navigator.popUntil(context, (r) => r.isFirst),
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Added to backlog"),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                  FocusScope.of(context).unfocus();
+                                }
+                              },
+                              child: Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: theme.colorScheme.primary
+                                          .withOpacity(0.3),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  Icons.add,
+                                  color: theme.colorScheme.onPrimary,
+                                  size: 23,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
-              const SizedBox(height: 28),
+              const SizedBox(height: 40),
+
+              CustomButton(
+                text: "Back to Home",
+                icon: Icon(
+                  Icons.arrow_forward_rounded,
+                  color: scheme.onPrimary,
+                  size: 20,
+                ),
+                onPressed: () {
+                  context.go('/dashboard');
+                },
+              ),
+
+              const SizedBox(height: 32),
             ],
           ),
         ),
@@ -122,199 +254,67 @@ class SessionCompleteScreen extends ConsumerWidget {
   }
 }
 
-// ── Info Card ─────────────────────────────────────────────
-
 class _InfoCard extends StatelessWidget {
   final IconData icon;
+  final Color accentColor;
   final String label;
   final String value;
 
   const _InfoCard({
     required this.icon,
+    required this.accentColor,
     required this.label,
     required this.value,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(18),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: Colors.black.withOpacity(0.04)),
       ),
       child: Row(
         children: [
           Container(
-            width: 42,
-            height: 42,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: accentColor.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: Colors.black87, size: 20),
+            child: Icon(icon, color: accentColor, size: 24),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: const TextStyle(
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey,
-                  letterSpacing: 0.8,
+                  fontWeight: FontWeight.w800,
+                  color: scheme.onSurface.withOpacity(0.4),
+                  letterSpacing: 1.1,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 value,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
+                style: theme.textTheme.headlineLarge?.copyWith(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  color: scheme.onSurface,
                 ),
               ),
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ── Backlog Input ─────────────────────────────────────────
-// Pure ConsumerWidget — no local state, controller lives in the notifier
-
-class _BacklogInput extends ConsumerWidget {
-  final Color primary;
-  final SessionCompleteNotifier notifier;
-
-  const _BacklogInput({required this.primary, required this.notifier});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Anything to add to your backlog after this session?",
-            style: TextStyle(
-              fontSize: 13.5,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-              height: 1.3,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: notifier.backlogController,
-                  onChanged: notifier.updateBacklog,
-                  maxLines: 2,
-                  minLines: 1,
-                  style: const TextStyle(fontSize: 14, color: Colors.black87),
-                  decoration: InputDecoration(
-                    hintText: "Ideas, tasks, or follow-ups...",
-                    hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              GestureDetector(
-                onTap: notifier.submitBacklog,
-                child: Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [primary, primary.withOpacity(0.75)],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: primary.withOpacity(0.30),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(Icons.add, color: Colors.white, size: 20),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Home Button ───────────────────────────────────────────
-
-class _HomeButton extends StatelessWidget {
-  final Color primary;
-  final VoidCallback onPressed;
-
-  const _HomeButton({required this.primary, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 54,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [primary, primary.withOpacity(0.80)]),
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: primary.withOpacity(0.30),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Back to Home",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(width: 8),
-            Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
-          ],
-        ),
       ),
     );
   }

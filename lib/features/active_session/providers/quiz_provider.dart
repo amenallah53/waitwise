@@ -1,31 +1,48 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:waitwise/data/models/session_model.dart';
 
-// ─── State model ──────────────────────────────────────────────────────────────
+// ─── State ────────────────────────────────────────────────────────────────────
 
 class QuizState {
-  final int? selectedOption;
-  final int currentQuestion;
-  final int totalQuestions;
+  final QuizSession session;
+  final int currentQuestionIndex;
+  final int? selectedOptionIndex;
+  final bool confirmed; // true after tapping Confirm
+  final bool done; // true after tapping Done
 
   const QuizState({
-    this.selectedOption,
-    this.currentQuestion = 1,
-    this.totalQuestions = 5,
+    required this.session,
+    this.currentQuestionIndex = 0,
+    this.selectedOptionIndex,
+    this.confirmed = false,
+    this.done = false,
   });
 
-  double get progress => currentQuestion / totalQuestions;
+  QuizQuestion get currentQuestion =>
+      session.aiContent.questions[currentQuestionIndex];
+
+  int get totalQuestions => session.aiContent.questions.length;
+  bool get isLastQuestion => currentQuestionIndex == totalQuestions - 1;
+  bool get hasSelection => selectedOptionIndex != null;
+
+  bool get isCorrect =>
+      confirmed && selectedOptionIndex == currentQuestion.correctIndex;
 
   QuizState copyWith({
-    int? selectedOption,
+    int? currentQuestionIndex,
+    int? selectedOptionIndex,
     bool clearSelection = false,
-    int? currentQuestion,
+    bool? confirmed,
+    bool? done,
   }) {
     return QuizState(
-      selectedOption: clearSelection
+      session: session,
+      currentQuestionIndex: currentQuestionIndex ?? this.currentQuestionIndex,
+      selectedOptionIndex: clearSelection
           ? null
-          : selectedOption ?? this.selectedOption,
-      currentQuestion: currentQuestion ?? this.currentQuestion,
-      totalQuestions: totalQuestions,
+          : selectedOptionIndex ?? this.selectedOptionIndex,
+      confirmed: confirmed ?? this.confirmed,
+      done: done ?? this.done,
     );
   }
 }
@@ -33,24 +50,47 @@ class QuizState {
 // ─── Notifier ─────────────────────────────────────────────────────────────────
 
 class QuizNotifier extends StateNotifier<QuizState> {
-  QuizNotifier() : super(const QuizState());
+  QuizNotifier(QuizSession session) : super(QuizState(session: session));
 
   void selectOption(int index) {
-    state = state.copyWith(selectedOption: index);
+    if (state.confirmed) return; // locked after confirm
+    state = state.copyWith(selectedOptionIndex: index);
   }
 
-  void nextQuestion() {
-    if (state.currentQuestion < state.totalQuestions) {
-      state = state.copyWith(
-        currentQuestion: state.currentQuestion + 1,
-        clearSelection: true,
-      );
+  void confirm() {
+    if (!state.hasSelection) return;
+    state = state.copyWith(confirmed: true);
+  }
+
+  void next() {
+    if (state.isLastQuestion) {
+      state = state.copyWith(done: true);
+      return;
     }
+    state = state.copyWith(
+      currentQuestionIndex: state.currentQuestionIndex + 1,
+      clearSelection: true,
+      confirmed: false,
+    );
+  }
+
+  void skip() {
+    if (state.isLastQuestion) {
+      state = state.copyWith(done: true);
+      return;
+    }
+    state = state.copyWith(
+      currentQuestionIndex: state.currentQuestionIndex + 1,
+      clearSelection: true,
+      confirmed: false,
+    );
   }
 }
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
-final quizProvider = StateNotifierProvider<QuizNotifier, QuizState>(
-  (ref) => QuizNotifier(),
-);
+// family so each QuizSession gets its own isolated provider instance
+final quizProvider =
+    StateNotifierProvider.family<QuizNotifier, QuizState, QuizSession>(
+      (ref, session) => QuizNotifier(session),
+    );
