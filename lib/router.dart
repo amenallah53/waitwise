@@ -1,0 +1,49 @@
+import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
+import 'package:waitwise/core/utils/shared_prefs.dart';
+import 'package:waitwise/features/active_session/screens/active_session_screen.dart';
+import 'package:waitwise/features/context_picker/screens/context_picker_screen.dart';
+import 'package:waitwise/features/dashboard/screens/dashboard_screen.dart';
+import 'package:waitwise/features/onboarding/screens/onboarding_screen.dart';
+import 'package:waitwise/features/session_complete/screens/session_complete_screen.dart';
+import 'package:waitwise/features/user_backlogs/screens/user_backlogs_screen.dart';
+
+final GoRouter appRouter = GoRouter(
+  initialLocation: '/',
+  routes: [
+    // ── Redirect gate — sync because prefs is already initialized ──────────
+    GoRoute(
+      path: '/',
+      redirect: (context, state) {
+        final onboardingDone = prefs.getBool('onboarding_done') ?? false;
+        return onboardingDone ? '/home' : '/onboarding';
+      },
+      builder: (context, state) => const SizedBox.shrink(),
+    ),
+
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingScreen(),
+    ),
+    GoRoute(
+      path: '/home',
+      builder: (context, state) => const ContextPickerScreen(),
+    ),
+    GoRoute(
+      path: '/session',
+      builder: (context, state) => const ActiveSessionScreen(),
+    ),
+    GoRoute(
+      path: '/session/complete',
+      builder: (context, state) => const SessionCompleteScreen(),
+    ),
+    GoRoute(
+      path: '/dashboard',
+      builder: (context, state) => const DashboardScreen(),
+    ),
+    GoRoute(
+      path: '/backlogs',
+      builder: (context, state) => UserBacklogsScreen(),
+    ),
+  ],
+);

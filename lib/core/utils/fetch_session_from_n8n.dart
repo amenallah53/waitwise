@@ -1,0 +1,38 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:waitwise/data/models/session_model.dart';
+
+Future<SessionModel> fetchSessionFromN8n({
+  required String userId,
+  required String context,
+  required String mood,
+  required int duration,
+}) async {
+  await dotenv.load(fileName: '.env');
+
+  /*const String webhookUrl =
+      'https://amenallah23.app.n8n.cloud/webhook-test/7b38731c-d2a7-42c0-bc70-bf311d4b83a6';*/
+
+  final response = await http
+      .post(
+        Uri.parse(dotenv.env['WEBHOOK_URL'] ?? '' /*webhookUrl*/),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'user_id': userId,
+          'context': context,
+          'mood': mood,
+          'duration': duration,
+        }),
+      )
+      .timeout(const Duration(seconds: 180)); // add timeout for better UX
+
+  if (response.statusCode == 200) {
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    //return json;
+    return SessionModel.fromJson(json); // your existing model
+  } else {
+    throw Exception('n8n workflow failed: ${response.statusCode}');
+  }
+}

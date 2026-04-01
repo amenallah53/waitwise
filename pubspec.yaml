@@ -1,0 +1,83 @@
+name: waitwise
+description: "Transform idle moments into meaningful micro-sessions."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  google_fonts: ^8.0.2
+  flutter_native_splash: ^2.4.4
+
+  # environment variables
+  flutter_dotenv: ^5.1.0
+
+  # state management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # backend
+  supabase_flutter: ^2.8.4
+
+  # networking (for n8n webhook)
+  http: ^1.2.2
+
+  # notifications
+  #flutter_local_notifications: ^18.0.1
+
+  # misc
+  go_router: ^14.6.2
+  shared_preferences: ^2.3.3
+
+  uuid: ^4.5.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.1
+  build_runner: ^2.4.13
+  riverpod_generator: ^2.6.1
+  custom_lint: ^0.7.5
+  riverpod_lint: ^2.6.1
+
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - .env
+
+flutter_native_splash:
+  color: "#9C27B0"
+  image: assets/images/logo_big_primary2.png
+  android: true
+  ios: true
+  android_gravity: center
+  ios_content_mode: center
+  fullscreen: true
+  branding_mode: center
+
+  android_12:
+    image: assets/images/logo_big_primary2.png
+    icon_background_color: "#9C27B0"
+    image_dark: assets/images/logo_big_primary2.png
+    icon_background_color_dark: "#9C27B0"
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/images/logo.png
+  min_sdk_android: 21
+  adaptive_icon_background: "#F5F5F5"
+  adaptive_icon_foreground: assets/images/logo.png
