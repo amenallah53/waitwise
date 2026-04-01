@@ -78,11 +78,6 @@ Future<void> updateUserInterests(String userId, List<String> interests) async {
   await _db.from('users').update({'interests': interests}).eq('id', userId);
 }
 
-/// Delete a user (cascades to sessions + backlogs via FK)
-Future<void> deleteUser(String userId) async {
-  await _db.from('users').delete().eq('id', userId);
-}
-
 // ─────────────────────────────────────────
 // BACKLOG CRUD
 // ─────────────────────────────────────────
@@ -115,20 +110,6 @@ Future<List<UserBacklog>> fetchUserBacklogs(String userId) async {
       .toList();
 }
 
-/*Future<void> updateBacklogItem(String backlogId, String newContent) async {
-  print('Update backlog: $backlogId');
-  final res = await _db
-      .from('user_backlogs')
-      .update({'content': newContent})
-      .eq('id', backlogId)
-      .select();
-
-  if (res.isEmpty) {
-    throw Exception('Update failed: no rows affected');
-  }
-  print('Update response: $res');
-}*/
-
 Future<void> updateBacklogItem(String backlogId, String newContent) async {
   try {
     print('Updating backlog: $backlogId');
@@ -154,11 +135,6 @@ Future<void> updateBacklogItem(String backlogId, String newContent) async {
     print(stack);
   }
 }
-
-/// Delete a single backlog item
-/*Future<void> deleteBacklogItem(String backlogId) async {
-  await _db.from('user_backlogs').delete().eq('id', backlogId);
-}*/
 
 Future<void> deleteBacklogItem(String backlogId) async {
   print('Deleting backlog: $backlogId');

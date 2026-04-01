@@ -118,7 +118,7 @@ class BacklogNotifier extends StateNotifier<BacklogState> {
   Future<void> editItem(String backlogId, String newText) async {
     if (newText.trim().isEmpty) return;
     try {
-      await updateBacklogItem(backlogId, newText.trim());
+      //await updateBacklogItem(backlogId, newText.trim());
       state = state.copyWith(
         items: state.items
             .map(
@@ -136,7 +136,7 @@ class BacklogNotifier extends StateNotifier<BacklogState> {
   /// Delete a single item — removes from Supabase and local list
   Future<void> deleteItem(String backlogId) async {
     try {
-      await deleteBacklogItem(backlogId);
+      //await deleteBacklogItem(backlogId);
       state = state.copyWith(
         items: state.items.where((i) => i.id != backlogId).toList(),
       );

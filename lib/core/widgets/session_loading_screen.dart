@@ -18,12 +18,20 @@ class _SessionLoadingScreenState extends State<SessionLoadingScreen>
 
   final List<_LoadingStep> _steps = const [
     _LoadingStep(message: 'Workflow just started...', delay: 0),
-    _LoadingStep(message: 'Fetching your backlog & past sessions...', delay: 3),
+    _LoadingStep(message: 'Fetching your backlog & past sessions...', delay: 5),
+    _LoadingStep(
+      message: 'AI agent is analyzing your data and context...',
+      delay: 10,
+    ),
     _LoadingStep(
       message: 'AI agent is deciding your session type...',
-      delay: 7,
+      delay: 30,
     ),
-    _LoadingStep(message: 'Almost there, please wait...', delay: 13),
+    _LoadingStep(
+      message: 'AI agent is creating your personalized session...',
+      delay: 60,
+    ),
+    _LoadingStep(message: 'Almost there, please wait...', delay: 90),
   ];
 
   int _currentStep = 0;

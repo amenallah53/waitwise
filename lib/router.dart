@@ -33,14 +33,32 @@ final GoRouter appRouter = GoRouter(
       path: '/session',
       builder: (context, state) => const ActiveSessionScreen(),
     ),
+    /*
+    GoRoute(
+      path: '/session/active/:id',
+      builder: (context, state) => const ActiveSessionScreen(),
+    ),
+    */
     GoRoute(
       path: '/session/complete',
       builder: (context, state) => const SessionCompleteScreen(),
     ),
+    /*
+    GoRoute(
+      path: '/session/active/:id/complete',
+      builder: (context, state) => const SessionCompleteScreen(),
+    ),
+    */
     GoRoute(
       path: '/dashboard',
       builder: (context, state) => const DashboardScreen(),
     ),
+    /*
+    GoRoute(
+      path: '/dashboard/session/:id',
+      builder: (context, state) => const PastSessionScreen(),
+    ),
+    */
     GoRoute(
       path: '/backlogs',
       builder: (context, state) => UserBacklogsScreen(),
