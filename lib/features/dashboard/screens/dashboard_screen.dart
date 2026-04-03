@@ -18,255 +18,265 @@ class DashboardScreen extends ConsumerWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       bottomNavigationBar: const CustomBottomNav(currentIndex: 1),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 32),
-
-              // ── Title ──────────────────────────────────────────────────
-              Text(
-                'Progress Overview',
-                style: theme.textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 32,
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              // ── Total sessions card ────────────────────────────────────
-              _StatCard(
-                label: 'TOTAL SESSIONS',
-                labelColor: theme.colorScheme.tertiary,
+        child: state.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : state.error != null
+            ? Center(child: Text('Error: ${state.error}'))
+            : SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        Text(
-                          '${state.totalSessions}',
-                          style: theme.textTheme.headlineLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 48,
-                            color: theme.colorScheme.onSurface,
-                            height: 1,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'completed',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.trending_up_rounded,
-                          size: 16,
-                          color: theme.colorScheme.secondary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '+${(state.weeklyGrowth * 100).toInt()}% from last week',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.colorScheme.secondary,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+                    const SizedBox(height: 32),
 
-              const SizedBox(height: 24),
+                    // ── Title ──────────────────────────────────────────────────
+                    Text(
+                      'Progress Overview',
+                      style: theme.textTheme.headlineLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 32,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
 
-              // ── Streak card ────────────────────────────────────────────
-              _StatCard(
-                label: 'CURRENT STREAK',
-                labelColor: theme.colorScheme.primary,
-                backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: [
-                            Text(
-                              '${state.currentStreak}',
-                              style: theme.textTheme.headlineLarge?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 48,
-                                color: theme.colorScheme.onSurface,
-                                height: 1,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'days',
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(
-                                  0.6,
+                    const SizedBox(height: 32),
+
+                    // ── Total sessions card ────────────────────────────────────
+                    _StatCard(
+                      label: 'TOTAL SESSIONS',
+                      labelColor: theme.colorScheme.tertiary,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(
+                                '${state.totalSessions}',
+                                style: theme.textTheme.headlineLarge?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 48,
+                                  color: theme.colorScheme.onSurface,
+                                  height: 1,
                                 ),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
                               ),
-                            ),
-                          ],
-                        ),
-                        if (state.isPersonalBest) ...[
+                              const SizedBox(width: 8),
+                              Text(
+                                'completed',
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: theme.colorScheme.onSurface
+                                      .withOpacity(0.6),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 12),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(
-                                0.12,
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.trending_up_rounded,
+                                size: 16,
+                                color: theme.colorScheme.secondary,
                               ),
-                              borderRadius: BorderRadius.circular(999),
+                              const SizedBox(width: 4),
+                              Text(
+                                '+${(state.weeklyGrowth * 100).toInt()}% from last week',
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: theme.colorScheme.secondary,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // ── Streak card ────────────────────────────────────────────
+                    _StatCard(
+                      label: 'CURRENT STREAK',
+                      labelColor: theme.colorScheme.primary,
+                      backgroundColor: theme.colorScheme.primary.withOpacity(
+                        0.1,
+                      ),
+                      child: Stack(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    '${state.currentStreak}',
+                                    style: theme.textTheme.headlineLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 48,
+                                          color: theme.colorScheme.onSurface,
+                                          height: 1,
+                                        ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'days',
+                                    style: theme.textTheme.bodyLarge?.copyWith(
+                                      color: theme.colorScheme.onSurface
+                                          .withOpacity(0.6),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (state.isPersonalBest) ...[
+                                const SizedBox(height: 12),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.primary
+                                        .withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                  child: Text(
+                                    'Personal Best',
+                                    style: theme.textTheme.bodyLarge?.copyWith(
+                                      color: theme.colorScheme.primary,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+
+                          // Decorative flame icon
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: Icon(
+                              Icons.local_fire_department_rounded,
+                              size: 96,
+                              color: theme.colorScheme.primary.withOpacity(0.2),
                             ),
-                            child: Text(
-                              'Personal Best',
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // ── Time reclaimed card ────────────────────────────────────
+                    _StatCard(
+                      label: 'TIME RECLAIMED',
+                      labelColor: theme.colorScheme.onSurface.withOpacity(0.4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(
+                                '${state.totalMinutes}',
+                                style: theme.textTheme.headlineLarge?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 48,
+                                  color: theme.colorScheme.onSurface,
+                                  height: 1,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'mins',
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: theme.colorScheme.onSurface
+                                      .withOpacity(0.6),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Progress bar
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(999),
+                            child: LinearProgressIndicator(
+                              value: (state.totalMinutes % 60) / 60,
+                              minHeight: 8,
+                              backgroundColor: theme.colorScheme.onSurface
+                                  .withOpacity(0.1),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                theme.colorScheme.primary,
                               ),
                             ),
                           ),
                         ],
-                      ],
-                    ),
-
-                    // Decorative flame icon
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Icon(
-                        Icons.local_fire_department_rounded,
-                        size: 96,
-                        color: theme.colorScheme.primary.withOpacity(0.2),
                       ),
                     ),
-                  ],
-                ),
-              ),
 
-              const SizedBox(height: 24),
+                    const SizedBox(height: 32),
 
-              // ── Time reclaimed card ────────────────────────────────────
-              _StatCard(
-                label: 'TIME RECLAIMED',
-                labelColor: theme.colorScheme.onSurface.withOpacity(0.4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                    // ── Recent Moments header ──────────────────────────────────
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${state.totalMinutes}',
-                          style: theme.textTheme.headlineLarge?.copyWith(
+                          'Recent Moments',
+                          style: theme.textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.w800,
-                            fontSize: 48,
+                            fontSize: 20,
                             color: theme.colorScheme.onSurface,
-                            height: 1,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'mins',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                        GestureDetector(
+                          onTap: () {},
+                          child: Text(
+                            'View All',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
 
-                    // Progress bar
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(999),
-                      child: LinearProgressIndicator(
-                        value: (state.totalMinutes % 60) / 60,
-                        minHeight: 8,
-                        backgroundColor: theme.colorScheme.onSurface
-                            .withOpacity(0.1),
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          theme.colorScheme.primary,
-                        ),
-                      ),
+                    const SizedBox(height: 24),
+
+                    // ── Session history list ───────────────────────────────────
+                    Column(
+                      children: state.recentSessions
+                          .map(
+                            (session) => Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: _SessionRow(
+                                session: session,
+                                onTap: () {},
+                              ),
+                            ),
+                          )
+                          .toList(),
                     ),
+
+                    const SizedBox(height: 32),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 32),
-
-              // ── Recent Moments header ──────────────────────────────────
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Recent Moments',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 20,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'View All',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // ── Session history list ───────────────────────────────────
-              Column(
-                children: state.recentSessions
-                    .map(
-                      (session) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _SessionRow(session: session, onTap: () {}),
-                      ),
-                    )
-                    .toList(),
-              ),
-
-              const SizedBox(height: 32),
-            ],
-          ),
-        ),
       ),
     );
   }

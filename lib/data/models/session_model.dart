@@ -9,6 +9,8 @@
 // SHARED ENUMS
 // ─────────────────────────────────────────
 
+import 'dart:convert';
+
 enum SessionType { reflection, task, quiz }
 
 // ─────────────────────────────────────────
@@ -39,7 +41,7 @@ abstract class SessionModel {
   });
 
   // Factory: reads the DB row and returns the correct subclass
-  factory SessionModel.fromJson(Map<String, dynamic> json) {
+  /*factory SessionModel.fromJson(Map<String, dynamic> json) {
     final type = json['session_type'] as String;
     final aiContent = json['ai_content'] as Map<String, dynamic>;
     final userResponse = json['user_response'] as Map<String, dynamic>?;
@@ -91,6 +93,90 @@ abstract class SessionModel {
               ? QuizResponse.fromJson(userResponse)
               : null,
         );
+      default:
+        throw Exception('Unknown session type: $type');
+    }
+  }*/
+
+  factory SessionModel.fromJson(Map<String, dynamic> json) {
+    final type = json['session_type'] as String;
+
+    final rawAi = json['ai_content'];
+    final rawUser = json['user_response'];
+
+    // Handle ai_content safely
+    Map<String, dynamic> aiContent;
+    if (rawAi is String) {
+      aiContent = jsonDecode(rawAi);
+    } else if (rawAi is Map<String, dynamic>) {
+      aiContent = rawAi;
+    } else {
+      throw Exception('Invalid ai_content format');
+    }
+
+    // Handle nullable user_response safely
+    Map<String, dynamic>? userResponse;
+    if (rawUser == null) {
+      userResponse = null;
+    } else if (rawUser is String) {
+      userResponse = jsonDecode(rawUser);
+    } else if (rawUser is Map<String, dynamic>) {
+      userResponse = rawUser;
+    } else {
+      throw Exception('Invalid user_response format');
+    }
+
+    final common = _CommonFields.fromJson(json);
+
+    switch (type) {
+      case 'reflection':
+        return ReflectionSession(
+          id: common.id,
+          userId: common.userId,
+          title: common.title,
+          context: common.context,
+          durationMinutes: common.durationMinutes,
+          userMood: common.userMood,
+          completed: common.completed,
+          createdAt: common.createdAt,
+          aiContent: ReflectionContent.fromJson(aiContent),
+          userResponse: userResponse != null
+              ? ReflectionResponse.fromJson(userResponse)
+              : null,
+        );
+
+      case 'task':
+        return TaskSession(
+          id: common.id,
+          userId: common.userId,
+          title: common.title,
+          context: common.context,
+          durationMinutes: common.durationMinutes,
+          userMood: common.userMood,
+          completed: common.completed,
+          createdAt: common.createdAt,
+          aiContent: TaskContent.fromJson(aiContent),
+          userResponse: userResponse != null
+              ? TaskResponse.fromJson(userResponse)
+              : null,
+        );
+
+      case 'quiz':
+        return QuizSession(
+          id: common.id,
+          userId: common.userId,
+          title: common.title,
+          context: common.context,
+          durationMinutes: common.durationMinutes,
+          userMood: common.userMood,
+          completed: common.completed,
+          createdAt: common.createdAt,
+          aiContent: QuizContent.fromJson(aiContent),
+          userResponse: userResponse != null
+              ? QuizResponse.fromJson(userResponse)
+              : null,
+        );
+
       default:
         throw Exception('Unknown session type: $type');
     }
