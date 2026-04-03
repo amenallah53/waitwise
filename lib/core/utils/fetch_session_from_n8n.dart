@@ -12,12 +12,12 @@ Future<SessionModel> fetchSessionFromN8n({
 }) async {
   await dotenv.load(fileName: '.env');
 
-  /*const String webhookUrl =
-      'https://amenallah23.app.n8n.cloud/webhook-test/7b38731c-d2a7-42c0-bc70-bf311d4b83a6';*/
+  const String webhookUrl =
+      'https://amenallah23.app.n8n.cloud/webhook-test/7b38731c-d2a7-42c0-bc70-bf311d4b83a6';
 
   final response = await http
       .post(
-        Uri.parse(dotenv.env['WEBHOOK_URL'] ?? '' /*webhookUrl*/),
+        Uri.parse(/*dotenv.env['WEBHOOK_URL'] ?? ''*/ webhookUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'user_id': userId,
@@ -26,7 +26,7 @@ Future<SessionModel> fetchSessionFromN8n({
           'duration': duration,
         }),
       )
-      .timeout(const Duration(seconds: 180)); // add timeout for better UX
+      .timeout(const Duration(seconds: 300)); // add timeout for better UX
 
   if (response.statusCode == 200) {
     final json = jsonDecode(response.body) as Map<String, dynamic>;
