@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 import 'package:waitwise/core/utils/current_user.dart';
 import 'package:waitwise/core/widgets/custom_appbar.dart';
 import 'package:waitwise/core/widgets/custom_bottom_nav.dart';
@@ -309,13 +310,17 @@ class ContextPickerScreen extends ConsumerWidget {
                 onPressed: state.isReady
                     ? () async {
                         final data = {
+                          'session_id': Uuid().v4(),
                           'user_id': currentUser?.id ?? 'unknown',
                           'context': state.context,
                           'mood': state.selectedMood!.label,
                           'duration': state.durationMinutes,
                         };
                         notifier.reset();
-                        context.go('/session', extra: data);
+                        context.go(
+                          '/session/active/${data['session_id']}',
+                          extra: data,
+                        );
                       }
                     : null,
               ),

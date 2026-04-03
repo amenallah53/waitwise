@@ -5,6 +5,7 @@ import 'package:waitwise/core/widgets/custom_appbar.dart';
 import 'package:waitwise/core/widgets/custom_circular_timer.dart';
 import 'package:waitwise/core/widgets/custom_button.dart';
 import 'package:waitwise/core/widgets/custom_text_field.dart';
+import 'package:waitwise/data/datasources/sessions_service.dart';
 import 'package:waitwise/data/models/session_model.dart';
 import 'package:waitwise/features/active_session/providers/reflection_provider.dart';
 
@@ -35,8 +36,9 @@ class _ReflectionScreenState extends ConsumerState<ReflectionScreen> {
 
   void _navigateToComplete() {
     ref.read(reflectionProvider.notifier).clear();
+    updateSessionCompletion(widget.session.id!, true);
     context.go(
-      '/session/complete',
+      '/session/active/${widget.session.id}/complete',
       extra: {'durationMinutes': widget.session.durationMinutes},
     );
   }

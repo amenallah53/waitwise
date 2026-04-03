@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:waitwise/core/widgets/custom_appbar.dart';
 import 'package:waitwise/core/widgets/custom_button.dart';
 import 'package:waitwise/core/widgets/custom_circular_timer.dart';
+import 'package:waitwise/data/datasources/sessions_service.dart';
 import 'package:waitwise/data/models/session_model.dart';
 import 'package:waitwise/features/active_session/providers/quiz_provider.dart';
 
@@ -25,8 +26,9 @@ class QuizScreen extends ConsumerWidget {
     // Navigate away when done
     if (state.done) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        updateSessionCompletion(session.id!, true);
         context.go(
-          '/session/complete',
+          '/session/active/${session.id}/complete',
           extra: {'durationMinutes': session.durationMinutes},
         );
       });
@@ -45,8 +47,9 @@ class QuizScreen extends ConsumerWidget {
               color: theme.colorScheme.tertiary,
               durationMinutes: session.durationMinutes,
               onComplete: () {
+                updateSessionCompletion(session.id!, true);
                 context.go(
-                  '/session/complete',
+                  '/session/active/${session.id}/complete',
                   extra: {'durationMinutes': session.durationMinutes},
                 );
               },

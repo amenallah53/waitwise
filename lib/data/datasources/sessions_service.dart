@@ -22,3 +22,16 @@ Future<List<SessionModel>> fetchSessions(String userId) async {
 
   return listOfSessions;
 }
+
+/// update the completion status of a session
+Future<void> updateSessionCompletion(String sessionId, bool completed) async {
+  try {
+    await _db
+        .from('sessions')
+        .update({'completed': completed})
+        .eq('id', sessionId);
+    print('Session $sessionId marked as completed: $completed');
+  } catch (e) {
+    print('Error updating session completion: $e');
+  }
+}

@@ -37,6 +37,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
   Future<void> _fetchSession() async {
     final extra = GoRouterState.of(context).extra as Map<String, dynamic>?;
 
+    final sessionId = extra?['session_id'] ?? 'unknown_session';
     final userId = extra?['user_id'] ?? '';
     final userContext = extra?['context'] ?? '';
     final mood = extra?['mood'] ?? '';
@@ -44,6 +45,7 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
 
     try {
       final session = await fetchSessionFromN8n(
+        sessionId: sessionId,
         userId: userId,
         context: userContext,
         mood: mood,

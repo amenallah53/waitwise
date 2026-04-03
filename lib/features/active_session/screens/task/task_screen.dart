@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waitwise/core/widgets/custom_appbar.dart';
 import 'package:waitwise/core/widgets/custom_circular_timer.dart';
+import 'package:waitwise/data/datasources/sessions_service.dart';
 import 'package:waitwise/data/models/session_model.dart';
 import 'package:waitwise/features/active_session/providers/tasks_provider.dart';
 import 'package:waitwise/features/session_complete/providers/session_complete_provider.dart';
@@ -71,8 +72,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                       color: theme.colorScheme.secondary,
                       durationMinutes: widget.session.durationMinutes,
                       onComplete: () {
+                        updateSessionCompletion(widget.session.id!, true);
                         context.go(
-                          '/session/complete',
+                          '/session/active/${widget.session.id}/complete',
                           extra: {
                             'durationMinutes': widget.session.durationMinutes,
                           },
@@ -235,8 +237,9 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                               sessionsThisWeek: 4,
                               currentStreak: 6,
                             );
+                        updateSessionCompletion(widget.session.id!, true);
                         context.go(
-                          '/session/complete',
+                          '/session/active/${widget.session.id}/complete',
                           extra: {
                             'durationMinutes': widget.session.durationMinutes,
                           },

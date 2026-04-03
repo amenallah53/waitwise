@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:waitwise/data/models/session_model.dart';
 
 Future<SessionModel> fetchSessionFromN8n({
+  required String sessionId,
   required String userId,
   required String context,
   required String mood,
@@ -20,6 +21,7 @@ Future<SessionModel> fetchSessionFromN8n({
         Uri.parse(/*dotenv.env['WEBHOOK_URL'] ?? ''*/ webhookUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
+          'session_id': sessionId,
           'user_id': userId,
           'context': context,
           'mood': mood,
