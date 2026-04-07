@@ -30,18 +30,10 @@ final GoRouter appRouter = GoRouter(
       path: '/home',
       builder: (context, state) => const ContextPickerScreen(),
     ),
-    /*GoRoute(
-      path: '/session',
-      builder: (context, state) => const ActiveSessionScreen(),
-    ),*/
     GoRoute(
       path: '/session/active/:id',
       builder: (context, state) => const ActiveSessionScreen(),
     ),
-    /*GoRoute(
-      path: '/session/complete',
-      builder: (context, state) => const SessionCompleteScreen(),
-    ),*/
     GoRoute(
       path: '/session/active/:id/complete',
       builder: (context, state) => const SessionCompleteScreen(),
