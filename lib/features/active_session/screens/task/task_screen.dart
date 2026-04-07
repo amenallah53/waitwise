@@ -73,10 +73,11 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                       durationMinutes: widget.session.durationMinutes,
                       onComplete: () {
                         updateSessionCompletion(widget.session.id!, true);
-                        context.go(
+                        context.push(
                           '/session/active/${widget.session.id}/complete',
                           extra: {
                             'durationMinutes': widget.session.durationMinutes,
+                            'session_id': widget.session.id,
                           },
                         );
                       },
@@ -198,7 +199,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        context.go('/home');
+                        context.push('/home');
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 18),
@@ -238,10 +239,11 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                               currentStreak: 6,
                             );
                         updateSessionCompletion(widget.session.id!, true);
-                        context.go(
+                        context.push(
                           '/session/active/${widget.session.id}/complete',
                           extra: {
                             'durationMinutes': widget.session.durationMinutes,
+                            'session_id': widget.session.id,
                           },
                         );
                       },

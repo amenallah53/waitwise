@@ -18,7 +18,7 @@ Future<SessionModel> fetchSessionFromN8n({
 
   final response = await http
       .post(
-        Uri.parse(/*dotenv.env['WEBHOOK_URL'] ?? ''*/ webhookUrl),
+        Uri.parse(dotenv.env['WEBHOOK_URL'] ?? '' /*webhookUrl*/),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'session_id': sessionId,

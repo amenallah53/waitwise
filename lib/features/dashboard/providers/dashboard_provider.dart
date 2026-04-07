@@ -68,37 +68,7 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
           totalMinutes: 312,
           weeklyGrowth: 0.12,
           isPersonalBest: true,
-          recentSessions: [
-            /*QuizSession(
-              id: '1',
-              userId: 'user1',
-              title: 'Quick Trivia',
-              context: 'Waiting for Train',
-              durationMinutes: 5,
-              createdAt: DateTime.now().subtract(const Duration(hours: 1)),
-              aiContent: const QuizContent(questions: []),
-            ),
-
-            ReflectionSession(
-              id: '2',
-              userId: 'user1',
-              title: 'Mindful Breathing',
-              context: 'Coffee Shop',
-              durationMinutes: 3,
-              createdAt: DateTime.now().subtract(const Duration(hours: 3)),
-              aiContent: const ReflectionContent(prompt: 'Breathe and reflect'),
-            ),
-
-            TaskSession(
-              id: '3',
-              userId: 'user1',
-              title: 'Inbox Clearing',
-              context: 'Elevator Transit',
-              durationMinutes: 8,
-              createdAt: DateTime.now().subtract(const Duration(hours: 6)),
-              aiContent: const TaskContent(prompt: 'Clear inbox', steps: []),
-            ),*/
-          ],
+          recentSessions: [],
         ),
       );
 
@@ -108,7 +78,7 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
   Future<void> load(String userId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final rows = await fetchSessions(userId);
+      final rows = await fetchSessions(userId, limit: 5);
       state = state.copyWith(isLoading: false, recentSessions: rows.toList());
       print('Loaded ${rows.length} sessions for user $userId');
     } catch (e) {
@@ -118,11 +88,6 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
 }
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
-
-/*final dashboardProvider =
-    StateNotifierProvider<DashboardNotifier, DashboardState>(
-      (ref) => DashboardNotifier(),
-    );*/
 
 final dashboardProvider =
     StateNotifierProvider<DashboardNotifier, DashboardState>((ref) {

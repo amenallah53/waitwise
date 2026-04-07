@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:waitwise/data/datasources/sessions_service.dart';
 
 // ─── State ───────────────────────────────────────────────
 class SessionCompleteState {
@@ -47,6 +48,10 @@ class SessionCompleteNotifier extends StateNotifier<SessionCompleteState> {
       sessionsThisWeek: sessionsThisWeek,
       currentStreak: currentStreak,
     );
+  }
+
+  void setSessionCompletion(String currenSessionID) async {
+    await updateSessionCompletion(currenSessionID, true);
   }
 
   void updateBacklog(String value) {

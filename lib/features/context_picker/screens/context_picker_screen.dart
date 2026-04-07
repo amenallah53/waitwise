@@ -317,7 +317,7 @@ class ContextPickerScreen extends ConsumerWidget {
                           'duration': state.durationMinutes,
                         };
                         notifier.reset();
-                        context.go(
+                        context.push(
                           '/session/active/${data['session_id']}',
                           extra: data,
                         );

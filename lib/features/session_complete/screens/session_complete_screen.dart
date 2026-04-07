@@ -19,6 +19,7 @@ class SessionCompleteScreen extends ConsumerStatefulWidget {
 class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
   late TextEditingController _localController;
   int _durationMinutes = 0;
+  //String _sessionID = '';
 
   @override
   void initState() {
@@ -38,11 +39,13 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
     // didChangeDependencies is the earliest safe place to call GoRouterState.of(context)
     final extra = GoRouterState.of(context).extra as Map<String, dynamic>?;
     _durationMinutes = extra?['durationMinutes'] ?? 0;
+    //_sessionID = extra?['session_id'] ?? '';
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(sessionCompleteProvider);
+    //final notifierSession = ref.read(sessionCompleteProvider.notifier);
     final notifier = ref.read(backlogProvider.notifier);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -257,7 +260,7 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
                   size: 20,
                 ),
                 onPressed: () async {
-                  context.go('/home');
+                  context.push('/home');
                 },
               ),
 

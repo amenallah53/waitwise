@@ -28,13 +28,15 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
             ],
           ),
           child: AppBar(
+            automaticallyImplyLeading: false,
             leading: needToShowBack
                 ? IconButton(
                     icon: const Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 20,
                     ),
-                    onPressed: () => context.go('/home'),
+                    onPressed: () => context.pop(),
+                    //onPressed: () => context.push('/home'),
                   )
                 : null,
             centerTitle: true,

@@ -27,9 +27,12 @@ class QuizScreen extends ConsumerWidget {
     if (state.done) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         updateSessionCompletion(session.id!, true);
-        context.go(
+        context.push(
           '/session/active/${session.id}/complete',
-          extra: {'durationMinutes': session.durationMinutes},
+          extra: {
+            'durationMinutes': session.durationMinutes,
+            'session_id': session.id,
+          },
         );
       });
     }
@@ -48,9 +51,12 @@ class QuizScreen extends ConsumerWidget {
               durationMinutes: session.durationMinutes,
               onComplete: () {
                 updateSessionCompletion(session.id!, true);
-                context.go(
+                context.push(
                   '/session/active/${session.id}/complete',
-                  extra: {'durationMinutes': session.durationMinutes},
+                  extra: {
+                    'durationMinutes': session.durationMinutes,
+                    'session_id': session.id,
+                  },
                 );
               },
             ),

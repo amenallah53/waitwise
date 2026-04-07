@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waitwise/core/utils/shared_prefs.dart';
 import 'package:waitwise/features/active_session/screens/active_session_screen.dart';
+import 'package:waitwise/features/all_sessions/screens/all_sessions_screen.dart';
 import 'package:waitwise/features/context_picker/screens/context_picker_screen.dart';
 import 'package:waitwise/features/dashboard/screens/dashboard_screen.dart';
 import 'package:waitwise/features/onboarding/screens/onboarding_screen.dart';
@@ -55,6 +56,10 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const PastSessionScreen(),
     ),
     */
+    GoRoute(
+      path: '/dashboard/all-sessions',
+      builder: (context, state) => const AllSessionsScreen(),
+    ),
     GoRoute(
       path: '/backlogs',
       builder: (context, state) => UserBacklogsScreen(),

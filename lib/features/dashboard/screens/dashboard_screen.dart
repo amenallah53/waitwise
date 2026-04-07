@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:waitwise/core/widgets/custom_appbar.dart';
 import 'package:waitwise/core/widgets/custom_bottom_nav.dart';
-import 'package:waitwise/data/models/session_model.dart';
+import 'package:waitwise/core/widgets/custom_session_row.dart';
 import '../providers/dashboard_provider.dart';
 
 class DashboardScreen extends ConsumerWidget {
@@ -243,7 +244,9 @@ class DashboardScreen extends ConsumerWidget {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            context.push("/dashboard/all-sessions");
+                          },
                           child: Text(
                             'View All',
                             style: theme.textTheme.bodyMedium?.copyWith(
@@ -264,7 +267,7 @@ class DashboardScreen extends ConsumerWidget {
                           .map(
                             (session) => Padding(
                               padding: const EdgeInsets.only(bottom: 12),
-                              child: _SessionRow(
+                              child: CustomSessionRow(
                                 session: session,
                                 onTap: () {},
                               ),
@@ -327,101 +330,6 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 12),
           child,
         ],
-      ),
-    );
-  }
-}
-
-// ── Session row ────────────────────────────────────────────────────────────────
-
-class _SessionRow extends StatelessWidget {
-  final SessionModel session;
-  final VoidCallback onTap;
-
-  const _SessionRow({required this.session, required this.onTap});
-
-  Color _dotColor(ThemeData theme) {
-    return switch (session.sessionType) {
-      SessionType.quiz => theme.colorScheme.tertiary,
-      SessionType.reflection => theme.colorScheme.secondary,
-      SessionType.task => theme.colorScheme.primary,
-    };
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: theme.colorScheme.onSurface.withOpacity(0.08),
-          ),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          children: [
-            // ── Type dot ──────────────────────────────────────────────
-            Container(
-              width: 12,
-              height: 12,
-              decoration: BoxDecoration(
-                color: _dotColor(theme),
-                shape: BoxShape.circle,
-              ),
-            ),
-
-            const SizedBox(width: 16),
-
-            // ── Title + context ────────────────────────────────────────
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    session.title ?? 'Untitled',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    session.context ?? 'No context provided',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // ── Duration + chevron ─────────────────────────────────────
-            Row(
-              children: [
-                Text(
-                  '${session.durationMinutes}m',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.4),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  size: 20,
-                  color: theme.colorScheme.onSurface.withOpacity(0.3),
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }

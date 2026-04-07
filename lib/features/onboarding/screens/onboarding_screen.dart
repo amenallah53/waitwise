@@ -318,7 +318,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                 notifier.reset();
 
                                 // 5. Navigate
-                                if (context.mounted) context.go('/home');
+                                if (context.mounted) context.push('/home');
                               }
                             : null,
                       ),

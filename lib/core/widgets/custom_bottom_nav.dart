@@ -9,13 +9,13 @@ class CustomBottomNav extends StatelessWidget {
   void _onTap(BuildContext context, int index) {
     switch (index) {
       case 0:
-        context.go('/home');
+        context.push('/home');
         break;
       case 1:
-        context.go('/dashboard');
+        context.push('/dashboard');
         break;
       case 2:
-        context.go('/backlogs');
+        context.push('/backlogs');
         break;
     }
   }

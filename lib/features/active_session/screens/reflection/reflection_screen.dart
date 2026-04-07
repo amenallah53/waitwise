@@ -37,9 +37,12 @@ class _ReflectionScreenState extends ConsumerState<ReflectionScreen> {
   void _navigateToComplete() {
     ref.read(reflectionProvider.notifier).clear();
     updateSessionCompletion(widget.session.id!, true);
-    context.go(
+    context.push(
       '/session/active/${widget.session.id}/complete',
-      extra: {'durationMinutes': widget.session.durationMinutes},
+      extra: {
+        'durationMinutes': widget.session.durationMinutes,
+        'session_id': widget.session.id,
+      },
     );
   }
 
