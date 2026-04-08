@@ -25,12 +25,6 @@ The goal is not to maximize productivity. It is to give people agency over how t
 
 ---
 
-## Screenshots
-
-> *Add your app screenshots here*
-
----
-
 ## Features
 
 - **AI-generated sessions** — every session is personalized based on the user's interests, mood, context, and personal backlog
@@ -40,6 +34,8 @@ The goal is not to maximize productivity. It is to give people agency over how t
 - **Session history & dashboard** — full history with filters by type, streaks, total time reclaimed, and weekly growth
 - **Automation workflow** — n8n orchestrates user data fetching, AI generation, and Supabase writes in a single webhook call
 - **Progressive loading** — animated loading screens with contextual messages during AI generation
+  
+<img width="1766" height="712" alt="image" src="https://github.com/user-attachments/assets/e8f7967a-e070-472a-a73f-34b2d4b71478" />
 
 ---
 
@@ -75,6 +71,8 @@ When the user taps "Start my session", the app POSTs to an n8n webhook. The work
 7. **Supabase Insert** — saves the session to the `sessions` table
 8. **Supabase Update** — increments user stats
 9. **Respond to Webhook** — returns the complete session JSON to Flutter
+
+<img width="1766" height="712" alt="image" src="https://github.com/user-attachments/assets/e3c32055-b722-4263-b2c6-76845416c188" />
 
 ---
 ## Sequence diagram
@@ -305,8 +303,15 @@ The AI generation via n8n takes 5–15 seconds. Showing a spinner every time the
 - Clear separation of concerns throughout codebase
 
 ---
+## DEMO Link 
 
+https://drive.google.com/drive/folders/1Hv3P0fHDMIKhR1gkP4z2SXeSZc9Mu8w5
+
+## Presentation link
+
+https://www.canva.com/design/DAHGM2asSc0/mCO67NgnMi_oeqWa02Kgrg/edit
 ## License
+
 
 MIT
 
