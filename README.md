@@ -60,31 +60,7 @@ The goal is not to maximize productivity. It is to give people agency over how t
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────┐
-│                   Flutter App                       │
-│                                                     │
-│  ┌──────────┐   ┌──────────┐   ┌────────────────┐  │
-│  │ Context  │   │ Session  │   │   Dashboard    │  │
-│  │  Picker  │──▶│  Screen  │   │  + History     │  │
-│  └──────────┘   └────┬─────┘   └───────┬────────┘  │
-│                      │                 │            │
-│              Riverpod Providers        │            │
-│                      │                 │            │
-└──────────────────────┼─────────────────┼────────────┘
-                       │                 │
-              HTTP POST │                 │ Supabase SDK
-                       ▼                 ▼
-              ┌─────────────┐     ┌─────────────┐
-              │    n8n      │     │  Supabase   │
-              │  Workflow   │     │  Database   │
-              └──────┬──────┘     └─────────────┘
-                     │
-         ┌───────────┼───────────┐
-         ▼           ▼           ▼
-    Supabase     OpenRouter   Supabase
-    (fetch user)  (AI gen)   (insert session)
-```
+<img width="719" height="409" alt="architecture_diagram1" src="https://github.com/user-attachments/assets/85ab5e30-5931-4e28-8be9-d40c01405d63" />
 
 ### n8n Workflow
 
@@ -101,6 +77,8 @@ When the user taps "Start my session", the app POSTs to an n8n webhook. The work
 9. **Respond to Webhook** — returns the complete session JSON to Flutter
 
 ---
+## Sequence diagram
+<img width="505" height="336" alt="sequence_diagram_waitwise" src="https://github.com/user-attachments/assets/b9b05321-0bb8-405a-8b54-48f37aee303e" />
 
 ## Database Schema
 
@@ -140,6 +118,9 @@ create table sessions (
   created_at       timestamptz default now()
 );
 ```
+
+<img width="792" height="361" alt="ER_diagram" src="https://github.com/user-attachments/assets/abbe89f4-4d1d-4e10-859d-76f40c8bb470" />
+
 
 ### Session JSON shapes
 
