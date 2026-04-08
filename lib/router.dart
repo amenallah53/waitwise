@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waitwise/core/utils/shared_prefs.dart';
+import 'package:waitwise/core/widgets/prefetch_loading_screen.dart';
 import 'package:waitwise/features/active_session/screens/active_session_screen.dart';
 import 'package:waitwise/features/all_sessions/screens/all_sessions_screen.dart';
 import 'package:waitwise/features/context_picker/screens/context_picker_screen.dart';
@@ -55,6 +56,11 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/backlogs',
       builder: (context, state) => UserBacklogsScreen(),
+    ),
+    GoRoute(
+      path: '/prefetch-loading',
+      builder: (context, state) =>
+          PrefetchLoadingScreen(prefetchFuture: state.extra as Future<void>),
     ),
   ],
 );

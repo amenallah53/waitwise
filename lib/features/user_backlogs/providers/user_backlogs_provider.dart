@@ -4,6 +4,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:waitwise/core/utils/current_user.dart';
+import 'package:waitwise/core/utils/prefetch_sessions.dart';
 import 'package:waitwise/data/datasources/users_service.dart';
 import 'package:waitwise/data/models/user_model.dart';
 
@@ -107,6 +108,11 @@ class BacklogNotifier extends StateNotifier<BacklogState> {
       final saved = await addBacklogItem(userId, text.trim());
       final item = BacklogItem.fromUserBacklog(saved);
       state = state.copyWith(items: [item, ...state.items]);
+      // ✅ Fire and forget — doesn't block the UI
+      final user = getCurrentUser();
+      if (user != null) {
+        prefetchOneSession(user: user, newBacklogContent: text.trim());
+      }
     } catch (e) {
       state = state.copyWith(error: e.toString());
     }

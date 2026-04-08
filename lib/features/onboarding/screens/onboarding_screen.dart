@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:waitwise/core/utils/current_user.dart';
+import 'package:waitwise/core/utils/prefetch_sessions.dart';
 import 'package:waitwise/core/widgets/custom_appbar.dart';
 import 'package:waitwise/core/widgets/custom_button.dart';
 import 'package:waitwise/core/widgets/custom_text_field.dart';
@@ -318,7 +319,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                 notifier.reset();
 
                                 // 5. Navigate
-                                if (context.mounted) context.push('/home');
+                                //if (context.mounted) context.push('/home');
+
+                                // Instead of context.push('/home') — navigate to prefetch loader
+                                if (context.mounted) {
+                                  final future = prefetchOfflineSessions(
+                                    user: newCurrentUser,
+                                    requestedCount: 5,
+                                  );
+                                  context.push(
+                                    '/prefetch-loading',
+                                    extra: future,
+                                  );
+                                }
                               }
                             : null,
                       ),

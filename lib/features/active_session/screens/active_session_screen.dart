@@ -1,12 +1,9 @@
-// ============================================================
-// lib/features/active_session/screens/active_session_screen.dart
-// ============================================================
-
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:waitwise/core/constants/fallback_sessions.dart';
 import 'package:waitwise/core/utils/fetch_session_from_n8n.dart';
+import 'package:waitwise/core/utils/offline_session_store.dart';
 import 'package:waitwise/core/widgets/session_loading_screen.dart';
 import 'package:waitwise/data/models/session_model.dart';
 import 'package:waitwise/features/active_session/screens/quiz/quiz_screen.dart';
@@ -57,8 +54,8 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
         _session = session;
         _isLoading = false;
       });
-    } catch (e, stack) {
-      print('❌ n8n failed — using fallback session: $e');
+      /*} catch (e, stack) {
+      print('n8n failed — using fallback session: $e');
       print(stack);
 
       final fallback = _pickFallbackSession(
@@ -67,6 +64,27 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
         mood: mood,
         duration: duration is int ? duration : 5,
       );
+
+      if (!mounted) return;
+      setState(() {
+        _session = fallback;
+        _isLoading = false;
+      });
+    }*/
+    } catch (e, stack) {
+      print('n8n failed — checking offline pool: $e');
+
+      // Try the pre-generated offline pool first
+      final offline = popOfflineSession();
+
+      final fallback =
+          offline ??
+          _pickFallbackSession(
+            userId: userId,
+            userContext: userContext,
+            mood: mood,
+            duration: duration is int ? duration : 5,
+          );
 
       if (!mounted) return;
       setState(() {
@@ -100,10 +118,6 @@ class _ActiveSessionScreenState extends State<ActiveSessionScreen> {
       poolOfFallbackSessions.length,
     )];
   }
-
-  // ─────────────────────────────────────────
-  // BUILD
-  // ─────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
