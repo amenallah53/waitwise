@@ -19,7 +19,6 @@ class SessionCompleteScreen extends ConsumerStatefulWidget {
 class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
   late TextEditingController _localController;
   int _durationMinutes = 0;
-  //String _sessionID = '';
 
   @override
   void initState() {
@@ -36,21 +35,37 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // didChangeDependencies is the earliest safe place to call GoRouterState.of(context)
     final extra = GoRouterState.of(context).extra as Map<String, dynamic>?;
     _durationMinutes = extra?['durationMinutes'] ?? 0;
-    //_sessionID = extra?['session_id'] ?? '';
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(sessionCompleteProvider);
-    //final notifierSession = ref.read(sessionCompleteProvider.notifier);
     final notifier = ref.read(backlogProvider.notifier);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-
     final UserModel? currentUser = getCurrentUser();
+
+    // ── Pre-compute colors once, avoiding repeated withOpacity calls ──
+    final primaryShadowColor = Color.fromRGBO(
+      scheme.primary.r.toInt(),
+      scheme.primary.g.toInt(),
+      scheme.primary.b.toInt(),
+      0.25,
+    );
+    final addBtnShadowColor = Color.fromRGBO(
+      scheme.primary.r.toInt(),
+      scheme.primary.g.toInt(),
+      scheme.primary.b.toInt(),
+      0.3,
+    );
+    final subtitleColor = Color.fromRGBO(
+      scheme.onSurface.r.toInt(),
+      scheme.onSurface.g.toInt(),
+      scheme.onSurface.b.toInt(),
+      0.5,
+    );
 
     return Scaffold(
       appBar: const CustomAppbar(needToShowBack: true),
@@ -73,7 +88,7 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
                     color: scheme.primary,
                     boxShadow: [
                       BoxShadow(
-                        color: scheme.primary.withOpacity(0.25),
+                        color: primaryShadowColor,
                         blurRadius: 30,
                         spreadRadius: 8,
                       ),
@@ -105,7 +120,7 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
                 "You've reclaimed your time. Great focus\nduring this interval.",
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  color: scheme.onSurface.withOpacity(0.5),
+                  color: subtitleColor,
                   height: 1.5,
                 ),
               ),
@@ -130,123 +145,121 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
 
               const SizedBox(height: 24),
 
-              // ── Backlog Input Card (Integrated) ──────────
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 32,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(32),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Anything to add to your\nbacklog after this session?",
-                      style: theme.textTheme.headlineLarge?.copyWith(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: theme.colorScheme.onSurface,
-                        height: 1.2,
+              // ── Backlog Input Card ──────────────────────
+              RepaintBoundary(
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 32,
+                  ),
+                  decoration: BoxDecoration(
+                    color: scheme.surface,
+                    borderRadius: BorderRadius.circular(32),
+                    // Simplified shadow — single layer, no opacity math
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x08000000), // ~3% black, pre-computed
+                        blurRadius: 20,
+                        offset: Offset(0, 10),
                       ),
-                    ),
-                    const SizedBox(height: 24),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Anything to add to your\nbacklog after this session?",
+                        style: theme.textTheme.headlineLarge?.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: scheme.onSurface,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
 
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF3F3F3),
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment
-                            .end, //aligns button with text field to the end as field  grows
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _localController,
-                              minLines: 3,
-                              maxLines: 5,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                fontSize: 14,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: "Ideas, tasks, or follow-ups...",
-                                hintStyle: TextStyle(
-                                  fontFamily:
-                                      theme.textTheme.bodyLarge?.fontFamily,
-                                  color: Colors.grey.withOpacity(0.6),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: scheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _localController,
+                                minLines: 3,
+                                maxLines: 5,
+                                style: theme.textTheme.bodyLarge?.copyWith(
                                   fontSize: 14,
                                 ),
-                                border: InputBorder.none,
-                                // Increased vertical padding increases the perceived height
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical:
-                                      30, // fixed height to prevent jump when adding lines
+                                decoration: InputDecoration(
+                                  hintText: "Ideas, tasks, or follow-ups...",
+                                  hintStyle: TextStyle(
+                                    fontFamily:
+                                        theme.textTheme.bodyLarge?.fontFamily,
+                                    color: scheme.onSurface.withAlpha(96),
+                                    fontSize: 14,
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 30,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              right: 12.0,
-                              bottom: 12.0,
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                if (_localController.text.isNotEmpty) {
-                                  notifier.addItem(
-                                    currentUser!.id!,
-                                    _localController.text,
-                                  );
-                                  _localController.clear();
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Added to backlog"),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                  FocusScope.of(context).unfocus();
-                                }
-                              },
-                              child: Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.primary,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: theme.colorScheme.primary
-                                          .withOpacity(0.3),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Icon(
-                                  Icons.add,
-                                  color: theme.colorScheme.onPrimary,
-                                  size: 23,
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                right: 12.0,
+                                bottom: 12.0,
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (_localController.text.isNotEmpty) {
+                                    notifier.addItem(
+                                      currentUser!.id!,
+                                      _localController.text,
+                                    );
+                                    _localController.clear();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Added to backlog"),
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                    FocusScope.of(context).unfocus();
+                                  }
+                                },
+                                child: Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: scheme.primary,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: addBtnShadowColor,
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    Icons.add,
+                                    color: scheme.onPrimary,
+                                    size: 23,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
 
@@ -291,20 +304,36 @@ class _InfoCard extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
+    // Pre-compute to avoid withOpacity in paint phase
+    final accentBg = Color.fromRGBO(
+      accentColor.r.toInt(),
+      accentColor.g.toInt(),
+      accentColor.b.toInt(),
+      0.12,
+    );
+    final labelColor = Color.fromRGBO(
+      scheme.onSurface.r.toInt(),
+      scheme.onSurface.g.toInt(),
+      scheme.onSurface.b.toInt(),
+      0.4,
+    );
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Colors.black.withOpacity(0.04)),
+        border: Border.all(
+          color: const Color(0x0A000000), // ~4% black, pre-computed
+        ),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: accentColor.withOpacity(0.12),
+              color: accentBg,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, color: accentColor, size: 24),
@@ -318,7 +347,7 @@ class _InfoCard extends StatelessWidget {
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
-                  color: scheme.onSurface.withOpacity(0.4),
+                  color: labelColor,
                   letterSpacing: 1.1,
                 ),
               ),

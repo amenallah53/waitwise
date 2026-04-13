@@ -10,6 +10,7 @@ List<SessionModel> loadFallbackSessions(
   return [
     // ── Reflections ──────────────────────────────────────
     ReflectionSession(
+      id: "1",
       userId: userId,
       title: 'Mindful Moment',
       context: userContext,
@@ -22,6 +23,7 @@ List<SessionModel> loadFallbackSessions(
       ),
     ),
     ReflectionSession(
+      id: "2",
       userId: userId,
       title: 'Career Check-in',
       context: userContext,
@@ -34,6 +36,7 @@ List<SessionModel> loadFallbackSessions(
       ),
     ),
     ReflectionSession(
+      id: "3",
       userId: userId,
       title: 'Energy Audit',
       context: userContext,
@@ -46,6 +49,7 @@ List<SessionModel> loadFallbackSessions(
       ),
     ),
     ReflectionSession(
+      id: "4",
       userId: userId,
       title: 'Unfinished Business',
       context: userContext,
@@ -58,6 +62,7 @@ List<SessionModel> loadFallbackSessions(
       ),
     ),
     ReflectionSession(
+      id: "5",
       userId: userId,
       title: 'The Highlight Reel',
       context: userContext,
@@ -72,6 +77,7 @@ List<SessionModel> loadFallbackSessions(
 
     // ── Tasks ─────────────────────────────────────────────
     TaskSession(
+      id: "6",
       userId: userId,
       title: 'Quick Brain Dump',
       context: userContext,
@@ -88,6 +94,7 @@ List<SessionModel> loadFallbackSessions(
       ),
     ),
     TaskSession(
+      id: "7",
       userId: userId,
       title: 'Digital Cleanup',
       context: userContext,
@@ -104,6 +111,7 @@ List<SessionModel> loadFallbackSessions(
       ),
     ),
     TaskSession(
+      id: "8",
       userId: userId,
       title: 'Tomorrow Prep',
       context: userContext,
@@ -120,6 +128,7 @@ List<SessionModel> loadFallbackSessions(
       ),
     ),
     TaskSession(
+      id: "9",
       userId: userId,
       title: 'Focus Reset',
       context: userContext,
@@ -145,6 +154,7 @@ List<SessionModel> loadFallbackSessions(
       ),
     ),
     TaskSession(
+      id: "10",
       userId: userId,
       title: 'Micro Goal Sprint',
       context: userContext,
@@ -169,6 +179,7 @@ List<SessionModel> loadFallbackSessions(
 
     // ── Quizzes ───────────────────────────────────────────
     QuizSession(
+      id: "11",
       userId: userId,
       title: 'Sports Legends',
       context: userContext,
@@ -218,6 +229,7 @@ List<SessionModel> loadFallbackSessions(
       ),
     ),
     QuizSession(
+      id: "12",
       userId: userId,
       title: 'Football IQ Test',
       context: userContext,
@@ -270,6 +282,7 @@ List<SessionModel> loadFallbackSessions(
       ),
     ),
     QuizSession(
+      id: "13",
       userId: userId,
       title: 'Combat Sports',
       context: userContext,
@@ -324,6 +337,7 @@ List<SessionModel> loadFallbackSessions(
       ),
     ),
     QuizSession(
+      id: "14",
       userId: userId,
       title: 'Cinema Classics',
       context: userContext,
@@ -382,6 +396,7 @@ List<SessionModel> loadFallbackSessions(
       ),
     ),
     QuizSession(
+      id: "15",
       userId: userId,
       title: 'Computer Science 101',
       context: userContext,

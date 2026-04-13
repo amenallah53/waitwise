@@ -291,46 +291,66 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         text: 'Get Started',
                         onPressed: state.isReady
                             ? () async {
-                                final newUserId = const Uuid().v4();
-                                final newCurrentUser = UserModel(
-                                  id: newUserId,
-                                  name: state.name,
-                                  interests: state.selectedInterests.toList(),
-                                  backlogs: [
-                                    UserBacklog(
-                                      userId: newUserId,
-                                      content: state.thoughts,
-                                      date: DateTime.now(),
-                                    ),
-                                  ],
-                                  createdAt: DateTime.now(),
-                                );
-
-                                // 1. Save locally
-                                saveCurrentUser(newCurrentUser);
-
-                                // 2. Save to Supabase — button shows spinner while this runs
-                                await saveUserToDb(newCurrentUser);
-
-                                // 3. Mark onboarding done
-                                markOnboardingDone();
-
-                                // 4. Reset provider
-                                notifier.reset();
-
-                                // 5. Navigate
-                                //if (context.mounted) context.push('/home');
-
-                                // Instead of context.push('/home') — navigate to prefetch loader
-                                if (context.mounted) {
-                                  final future = prefetchOfflineSessions(
-                                    user: newCurrentUser,
-                                    requestedCount: 5,
+                                try {
+                                  final newUserId = const Uuid().v4();
+                                  final newCurrentUser = UserModel(
+                                    id: newUserId,
+                                    name: state.name,
+                                    interests: state.selectedInterests.toList(),
+                                    backlogs: [
+                                      UserBacklog(
+                                        userId: newUserId,
+                                        content: state.thoughts,
+                                        date: DateTime.now(),
+                                      ),
+                                    ],
+                                    createdAt: DateTime.now(),
                                   );
-                                  context.push(
-                                    '/prefetch-loading',
-                                    extra: future,
+
+                                  final url = const String.fromEnvironment(
+                                    'SUPABASE_URL',
                                   );
+                                  final key = const String.fromEnvironment(
+                                    'SUPABASE_ANON_KEY',
+                                  );
+                                  print('URL: $url');
+                                  print('KEY length: ${key.length}');
+
+                                  saveCurrentUser(newCurrentUser);
+                                  await saveUserToDb(newCurrentUser);
+                                  markOnboardingDone();
+                                  notifier.reset();
+
+                                  if (context.mounted) {
+                                    final future = prefetchOfflineSessions(
+                                      user: newCurrentUser,
+                                      requestedCount: 5,
+                                    );
+                                    context.push(
+                                      '/prefetch-loading',
+                                      extra: future,
+                                    );
+                                  }
+                                } catch (e, stack) {
+                                  // Show the real error on screen
+                                  if (context.mounted) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                        title: const Text('Error'),
+                                        content: SingleChildScrollView(
+                                          child: Text(e.toString()),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
                                 }
                               }
                             : null,

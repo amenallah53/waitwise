@@ -1,4 +1,4 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+//import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -11,11 +11,12 @@ Future<SessionModel> fetchSessionFromN8n({
   required String mood,
   required int duration,
 }) async {
-  await dotenv.load(fileName: '.env');
+  //await dotenv.load(fileName: '.env');
+  const webhookUrl = String.fromEnvironment('WEBHOOK_URL');
 
   final response = await http
       .post(
-        Uri.parse(dotenv.env['WEBHOOK_URL'] ?? ''),
+        Uri.parse(/*dotenv.env['WEBHOOK_URL'] ?? ''*/ webhookUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'session_id': sessionId,

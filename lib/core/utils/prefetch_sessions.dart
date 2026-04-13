@@ -6,7 +6,7 @@
 // ============================================================
 
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+//import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:waitwise/core/utils/offline_session_store.dart';
 import 'package:waitwise/data/models/session_model.dart';
@@ -25,9 +25,10 @@ Future<void> prefetchOfflineSessions({
   void Function(List<SessionModel>)? onSuccess,
 }) async {
   try {
-    final webhookUrl = dotenv.env['PREFETCH_WEBHOOK_URL'] ?? '';
-    if (webhookUrl.isEmpty) {
-      print('⚠️ PREFETCH_WEBHOOK_URL not set in .env');
+    const prefetchUrl = String.fromEnvironment('PREFETCH_WEBHOOK_URL');
+    //final webhookUrl = dotenv.env['PREFETCH_WEBHOOK_URL'] ?? '';
+    if (prefetchUrl.isEmpty) {
+      print(' PREFETCH_WEBHOOK_URL not set in .env');
       return;
     }
 
@@ -36,7 +37,7 @@ Future<void> prefetchOfflineSessions({
 
     final response = await http
         .post(
-          Uri.parse(webhookUrl),
+          Uri.parse(prefetchUrl),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'user_id': user.id,
@@ -49,7 +50,7 @@ Future<void> prefetchOfflineSessions({
         .timeout(const Duration(seconds: 300));
 
     if (response.statusCode != 200) {
-      print('⚠️ prefetch failed: ${response.statusCode}');
+      print(' prefetch failed: ${response.statusCode}');
       return;
     }
 
@@ -59,7 +60,7 @@ Future<void> prefetchOfflineSessions({
     final List<dynamic> rawSessions = body['sessions'] as List? ?? [];
 
     if (rawSessions.isEmpty) {
-      print('⚠️ prefetch returned 0 sessions');
+      print(' prefetch returned 0 sessions');
       return;
     }
 
@@ -69,7 +70,7 @@ Future<void> prefetchOfflineSessions({
         final map = Map<String, dynamic>.from(raw as Map);
         sessions.add(SessionModel.fromJson(map));
       } catch (e) {
-        print('⚠️ skipping malformed prefetch session: $e');
+        print(' skipping malformed prefetch session: $e');
       }
     }
 
@@ -77,12 +78,12 @@ Future<void> prefetchOfflineSessions({
 
     // Replace the pool with fresh sessions
     await saveOfflineSessions(sessions);
-    print('✅ prefetched ${sessions.length} offline sessions');
+    print(' prefetched ${sessions.length} offline sessions');
 
     onSuccess?.call(sessions);
   } catch (e) {
     // Never crash the caller — prefetch is a background nicety
-    print('⚠️ prefetchOfflineSessions error: $e');
+    print(' prefetchOfflineSessions error: $e');
   }
 }
 
@@ -93,12 +94,13 @@ Future<void> prefetchOneSession({
   required String newBacklogContent,
 }) async {
   try {
-    final webhookUrl = dotenv.env['PREFETCH_WEBHOOK_URL'] ?? '';
-    if (webhookUrl.isEmpty) return;
+    //final webhookUrl = dotenv.env['PREFETCH_WEBHOOK_URL'] ?? '';
+    const prefetchUrl = String.fromEnvironment('PREFETCH_WEBHOOK_URL');
+    if (prefetchUrl.isEmpty) return;
 
     final response = await http
         .post(
-          Uri.parse(webhookUrl),
+          Uri.parse(prefetchUrl),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'user_id': user.id,
@@ -119,7 +121,7 @@ Future<void> prefetchOneSession({
     final map = Map<String, dynamic>.from(rawSessions.first as Map);
     final session = SessionModel.fromJson(map);
     await appendOfflineSession(session);
-    print('✅ appended 1 offline session from new backlog');
+    print(' appended 1 offline session from new backlog');
   } catch (e) {
     print('⚠️ prefetchOneSession error: $e');
   }

@@ -262,19 +262,22 @@ class DashboardScreen extends ConsumerWidget {
                     const SizedBox(height: 24),
 
                     // ── Session history list ───────────────────────────────────
-                    Column(
-                      children: state.recentSessions
-                          .map(
-                            (session) => Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: CustomSessionRow(
-                                session: session,
-                                onTap: () {},
+                    if (state.recentSessions.isEmpty)
+                      _EmptyState()
+                    else
+                      Column(
+                        children: state.recentSessions
+                            .map(
+                              (session) => Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: CustomSessionRow(
+                                  session: session,
+                                  onTap: () {},
+                                ),
                               ),
-                            ),
-                          )
-                          .toList(),
-                    ),
+                            )
+                            .toList(),
+                      ),
 
                     const SizedBox(height: 32),
                   ],
@@ -330,6 +333,50 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 12),
           child,
         ],
+      ),
+    );
+  }
+}
+
+// ── Empty state ────────────────────────────────────────────────────────────────
+
+class _EmptyState extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 80),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.inbox_outlined,
+              size: 48,
+              color: theme.colorScheme.onSurface.withOpacity(0.2),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Your Session history is empty',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.4),
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Go to Home screen, Start a new "micro-session" to get started.',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.3),
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
