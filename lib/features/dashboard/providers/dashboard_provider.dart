@@ -63,11 +63,11 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
   DashboardNotifier()
     : super(
         DashboardState(
-          totalSessions: 42,
-          currentStreak: 14,
-          totalMinutes: 312,
+          totalSessions: 0,
+          currentStreak: 0,
+          totalMinutes: 0,
           weeklyGrowth: 0.12,
-          isPersonalBest: true,
+          isPersonalBest: false,
           recentSessions: [],
         ),
       );
@@ -79,7 +79,18 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final rows = await fetchSessions(userId, limit: 5);
-      state = state.copyWith(isLoading: false, recentSessions: rows.toList());
+      
+      final currentUser = getCurrentUser();
+      final currentSessionsList = rows.toList();
+
+      state = state.copyWith(
+        isLoading: false, 
+        recentSessions: currentSessionsList,
+        totalSessions: currentUser?.sessionsCompleted ?? 0,
+        currentStreak: currentUser?.currentStreak ?? 0,
+        totalMinutes: currentUser?.timesReclaimed ?? 0,
+        isPersonalBest: (currentUser?.currentStreak ?? 0) >= (currentUser?.bestStreak ?? 0) && (currentUser?.currentStreak ?? 0) > 0,
+      );
       print('Loaded ${rows.length} sessions for user $userId');
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());

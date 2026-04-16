@@ -231,13 +231,6 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        ref
-                            .read(sessionCompleteProvider.notifier)
-                            .setSessionData(
-                              minutesSpent: widget.session.durationMinutes,
-                              sessionsThisWeek: 4,
-                              currentStreak: 6,
-                            );
                         updateSessionCompletion(widget.session.id!, true);
                         context.push(
                           '/session/active/${widget.session.id}/complete',

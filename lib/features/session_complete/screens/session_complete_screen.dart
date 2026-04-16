@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:waitwise/core/utils/current_user.dart';
-import 'package:waitwise/data/models/user_model.dart';
-import 'package:waitwise/features/session_complete/providers/session_complete_provider.dart';
 import 'package:waitwise/core/widgets/custom_appbar.dart';
 import 'package:waitwise/core/widgets/custom_button.dart';
+import 'package:waitwise/data/models/user_model.dart';
+import 'package:waitwise/features/dashboard/providers/dashboard_provider.dart';
+import 'package:waitwise/features/session_complete/providers/session_complete_provider.dart';
 import 'package:waitwise/features/user_backlogs/providers/user_backlogs_provider.dart';
-import 'package:go_router/go_router.dart';
 
 class SessionCompleteScreen extends ConsumerStatefulWidget {
   const SessionCompleteScreen({super.key});
@@ -130,8 +131,8 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
               _InfoCard(
                 icon: Icons.calendar_today_rounded,
                 accentColor: scheme.secondary,
-                label: "SESSIONS THIS WEEK",
-                value: "${state.sessionsThisWeek}",
+                label: "TOTAL SESSIONS",
+                value: "${currentUser?.sessionsCompleted ?? 0}",
               ),
 
               const SizedBox(height: 16),
@@ -140,7 +141,7 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
                 icon: Icons.local_fire_department_rounded,
                 accentColor: scheme.tertiary,
                 label: "CURRENT STREAK",
-                value: "${state.currentStreak} days",
+                value: "${currentUser?.currentStreak ?? 0} days",
               ),
 
               const SizedBox(height: 24),
@@ -273,6 +274,7 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
                   size: 20,
                 ),
                 onPressed: () async {
+                  ref.invalidate(dashboardProvider);
                   context.push('/home');
                 },
               ),
