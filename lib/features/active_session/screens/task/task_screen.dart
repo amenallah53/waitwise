@@ -55,6 +55,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     final steps = widget.session.aiContent.steps;
     //final state = ref.watch(tasksProvider);
     return Scaffold(
+      extendBody: false,
       appBar: CustomAppbar(needToShowBack: true),
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(

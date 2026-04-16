@@ -22,6 +22,7 @@ class UserBacklogsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
+      extendBody: false,
       appBar: CustomAppbar(),
       backgroundColor: const Color(0xFFF9F9F9),
       bottomNavigationBar: const CustomBottomNav(currentIndex: 2),

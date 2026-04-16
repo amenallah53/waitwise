@@ -83,6 +83,7 @@ class _PrefetchLoadingScreenState extends State<PrefetchLoadingScreen>
     final theme = Theme.of(context);
 
     return Scaffold(
+      extendBody: false,
       backgroundColor: const Color(0xFFF9F9F9),
       body: SafeArea(
         child: Padding(

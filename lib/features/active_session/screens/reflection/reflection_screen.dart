@@ -53,6 +53,7 @@ class _ReflectionScreenState extends ConsumerState<ReflectionScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      extendBody: false,
       appBar: CustomAppbar(needToShowBack: true),
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(

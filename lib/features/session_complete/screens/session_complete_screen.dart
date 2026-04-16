@@ -69,6 +69,7 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
     );
 
     return Scaffold(
+      extendBody: false,
       appBar: const CustomAppbar(needToShowBack: true),
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
@@ -219,7 +220,7 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
                               ),
                               child: GestureDetector(
                                 onTap: () {
-                                  if (_localController.text.isNotEmpty) {
+                                  if (_localController.text.isNotEmpty && currentUser?.id != null) {
                                     notifier.addItem(
                                       currentUser!.id!,
                                       _localController.text,

@@ -106,9 +106,9 @@ final dashboardProvider =
 
       UserModel? currentUser = getCurrentUser();
 
-      // Trigger load immediately
-      final userId = currentUser?.id; // however you get it
-      notifier.load(userId!);
+      if (currentUser?.id != null) {
+        notifier.load(currentUser!.id!);
+      }
 
       return notifier;
     });

@@ -38,6 +38,7 @@ class QuizScreen extends ConsumerWidget {
     }
 
     return Scaffold(
+      extendBody: false,
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: CustomAppbar(needToShowBack: true),
       body: SafeArea(

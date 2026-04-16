@@ -32,7 +32,8 @@ class _AllSessionsScreenState extends ConsumerState<AllSessionsScreen> {
     final notifier = ref.read(allSessionsProvider.notifier);
     final theme = Theme.of(context);
 
-    return Scaffold(
+    return Scaffold( 
+      extendBody: false,
       appBar: CustomAppbar(needToShowBack: true),
       backgroundColor: theme.scaffoldBackgroundColor,
       bottomNavigationBar: const CustomBottomNav(currentIndex: 1),

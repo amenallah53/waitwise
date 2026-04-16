@@ -76,6 +76,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final allInterests = [..._interests, ...state.customInterests];
 
     return Scaffold(
+      extendBody: false,
       appBar: const CustomAppbar(),
       body: Stack(
         children: [

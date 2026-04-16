@@ -15,6 +15,7 @@ class DashboardScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
+      extendBody: false,
       appBar: CustomAppbar(),
       backgroundColor: theme.scaffoldBackgroundColor,
       bottomNavigationBar: const CustomBottomNav(currentIndex: 1),

@@ -22,6 +22,7 @@ class ContextPickerScreen extends ConsumerWidget {
     final UserModel? currentUser = getCurrentUser();
 
     return Scaffold(
+      extendBody: false,
       bottomNavigationBar: const CustomBottomNav(currentIndex: 0),
       appBar: CustomAppbar(),
       backgroundColor: const Color(0xFFF9F9F9),
