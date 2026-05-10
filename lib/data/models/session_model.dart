@@ -10,6 +10,7 @@
 // ─────────────────────────────────────────
 
 import 'dart:convert';
+import 'package:uuid/uuid.dart';
 
 enum SessionType { reflection, task, quiz }
 
@@ -220,20 +221,30 @@ class _CommonFields {
     required this.createdAt,
   });
 
-  factory _CommonFields.fromJson(Map<String, dynamic> json) => _CommonFields(
-    id: json['id']?.toString(),
-    userId: json['user_id']?.toString() ?? 'unknown',
-    title: json['title']?.toString(),
-    context: json['context']?.toString(),
-    durationMinutes: json['duration_minutes'] != null 
-        ? int.tryParse(json['duration_minutes'].toString()) ?? 5 
-        : 5,
-    userMood: json['user_mood']?.toString(),
-    completed: json['completed'] == true || json['completed'] == 'true',
-    createdAt: json['created_at'] != null 
-        ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now() 
-        : DateTime.now(),
-  );
+  factory _CommonFields.fromJson(Map<String, dynamic> json) {
+    String? finalId = json['id']?.toString();
+    if (finalId == null || finalId == 'undefined' || finalId.isEmpty) {
+      finalId = json['session_id']?.toString();
+    }
+    if (finalId == null || finalId == 'undefined' || finalId.isEmpty) {
+      finalId = const Uuid().v4();
+    }
+
+    return _CommonFields(
+      id: finalId,
+      userId: json['user_id']?.toString() ?? 'unknown',
+      title: json['title']?.toString(),
+      context: json['context']?.toString(),
+      durationMinutes: json['duration_minutes'] != null 
+          ? int.tryParse(json['duration_minutes'].toString()) ?? 5 
+          : 5,
+      userMood: json['user_mood']?.toString(),
+      completed: json['completed'] == true || json['completed'] == 'true',
+      createdAt: json['created_at'] != null 
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now() 
+          : DateTime.now(),
+    );
+  }
 }
 
 // ─────────────────────────────────────────

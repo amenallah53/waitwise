@@ -32,7 +32,9 @@ Future<SessionModel> fetchSessionFromN8n({
 
   if (response.statusCode == 200) {
     final json = jsonDecode(response.body) as Map<String, dynamic>;
-    //return json;
+    if (json['id'] == null && json['session_id'] == null) {
+      json['session_id'] = sessionId;
+    }
     return SessionModel.fromJson(json); // your existing model
   } else {
     throw Exception('n8n workflow failed: ${response.statusCode}');
