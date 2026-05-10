@@ -25,9 +25,7 @@ Future<void> prefetchOfflineSessions({
   void Function(List<SessionModel>)? onSuccess,
 }) async {
   try {
-    //const prefetchUrl = String.fromEnvironment('PREFETCH_WEBHOOK_URL');
-    const prefetchUrl =
-        "https://amenkalai23.app.n8n.cloud/webhook-test/a414913c-402f-48db-a2d4-b35a4cda9959";
+    const prefetchUrl = String.fromEnvironment('PREFETCH_WEBHOOK_URL');
     //final webhookUrl = dotenv.env['PREFETCH_WEBHOOK_URL'] ?? '';
     if (prefetchUrl.isEmpty) {
       print(' PREFETCH_WEBHOOK_URL not set in .env');
@@ -67,7 +65,10 @@ Future<void> prefetchOfflineSessions({
     } else if (body is Map) {
       rawSessions = (body['sessions'] as List?) ?? [];
       // sometimes n8n returns a single object if it's just one item
-      if (rawSessions.isEmpty && (body.containsKey('session_type') || body.containsKey('type') || body.containsKey('title'))) {
+      if (rawSessions.isEmpty &&
+          (body.containsKey('session_type') ||
+              body.containsKey('type') ||
+              body.containsKey('title'))) {
         rawSessions = [body];
       }
     }
@@ -108,9 +109,7 @@ Future<void> prefetchOneSession({
 }) async {
   try {
     //final webhookUrl = dotenv.env['PREFETCH_WEBHOOK_URL'] ?? '';
-    //const prefetchUrl = String.fromEnvironment('PREFETCH_WEBHOOK_URL');
-    const prefetchUrl =
-        "https://amenkalai23.app.n8n.cloud/webhook-test/a414913c-402f-48db-a2d4-b35a4cda9959";
+    const prefetchUrl = String.fromEnvironment('PREFETCH_WEBHOOK_URL');
     if (prefetchUrl.isEmpty) return;
 
     final response = await http
@@ -139,7 +138,10 @@ Future<void> prefetchOneSession({
       rawSessions = body;
     } else if (body is Map) {
       rawSessions = (body['sessions'] as List?) ?? [];
-      if (rawSessions.isEmpty && (body.containsKey('session_type') || body.containsKey('type') || body.containsKey('title'))) {
+      if (rawSessions.isEmpty &&
+          (body.containsKey('session_type') ||
+              body.containsKey('type') ||
+              body.containsKey('title'))) {
         rawSessions = [body];
       }
     }
