@@ -26,7 +26,6 @@ class QuizScreen extends ConsumerWidget {
     // Navigate away when done
     if (state.done) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        updateSessionCompletion(session.id!, true);
         context.push(
           '/session/active/${session.id}/complete',
           extra: {
@@ -51,7 +50,6 @@ class QuizScreen extends ConsumerWidget {
               color: theme.colorScheme.tertiary,
               durationMinutes: session.durationMinutes,
               onComplete: () {
-                updateSessionCompletion(session.id!, true);
                 context.push(
                   '/session/active/${session.id}/complete',
                   extra: {

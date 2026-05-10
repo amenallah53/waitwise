@@ -73,7 +73,6 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                       color: theme.colorScheme.secondary,
                       durationMinutes: widget.session.durationMinutes,
                       onComplete: () {
-                        updateSessionCompletion(widget.session.id!, true);
                         context.push(
                           '/session/active/${widget.session.id}/complete',
                           extra: {
@@ -232,7 +231,6 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        updateSessionCompletion(widget.session.id!, true);
                         context.push(
                           '/session/active/${widget.session.id}/complete',
                           extra: {

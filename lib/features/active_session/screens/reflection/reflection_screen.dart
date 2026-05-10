@@ -36,7 +36,6 @@ class _ReflectionScreenState extends ConsumerState<ReflectionScreen> {
 
   void _navigateToComplete() {
     ref.read(reflectionProvider.notifier).clear();
-    updateSessionCompletion(widget.session.id!, true);
     context.push(
       '/session/active/${widget.session.id}/complete',
       extra: {

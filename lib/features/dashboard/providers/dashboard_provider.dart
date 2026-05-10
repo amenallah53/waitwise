@@ -3,6 +3,7 @@ import 'package:waitwise/core/utils/current_user.dart';
 import 'package:waitwise/data/datasources/sessions_service.dart';
 import 'package:waitwise/data/models/session_model.dart';
 import 'package:waitwise/data/models/user_model.dart';
+import 'package:waitwise/data/datasources/users_service.dart';
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
@@ -78,19 +79,34 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
   Future<void> load(String userId) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
+      // Fetch latest sessions
       final rows = await fetchSessions(userId, limit: 5);
       
-      final currentUser = getCurrentUser();
+      // Fetch latest user data from DB for accurate stats
+      final user = await fetchUser(userId);
       final currentSessionsList = rows.toList();
 
-      state = state.copyWith(
-        isLoading: false, 
-        recentSessions: currentSessionsList,
-        totalSessions: currentUser?.sessionsCompleted ?? 0,
-        currentStreak: currentUser?.currentStreak ?? 0,
-        totalMinutes: currentUser?.timesReclaimed ?? 0,
-        isPersonalBest: (currentUser?.currentStreak ?? 0) >= (currentUser?.bestStreak ?? 0) && (currentUser?.currentStreak ?? 0) > 0,
-      );
+      if (user != null) {
+        state = state.copyWith(
+          isLoading: false, 
+          recentSessions: currentSessionsList,
+          totalSessions: user.sessionsCompleted,
+          currentStreak: user.currentStreak,
+          totalMinutes: user.timesReclaimed,
+          isPersonalBest: user.currentStreak >= user.bestStreak && user.currentStreak > 0,
+        );
+      } else {
+        // Fallback to local if fetch failed or user not found
+        final currentUser = getCurrentUser();
+        state = state.copyWith(
+          isLoading: false, 
+          recentSessions: currentSessionsList,
+          totalSessions: currentUser?.sessionsCompleted ?? 0,
+          currentStreak: currentUser?.currentStreak ?? 0,
+          totalMinutes: currentUser?.timesReclaimed ?? 0,
+          isPersonalBest: (currentUser?.currentStreak ?? 0) >= (currentUser?.bestStreak ?? 0) && (currentUser?.currentStreak ?? 0) > 0,
+        );
+      }
       print('Loaded ${rows.length} sessions for user $userId');
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());

@@ -37,7 +37,14 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/session/active/:id/complete',
-      builder: (context, state) => const SessionCompleteScreen(),
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        final sessionId = state.pathParameters['id'];
+        return SessionCompleteScreen(
+          sessionId: sessionId,
+          durationMinutes: extra?['durationMinutes'] as int? ?? 0,
+        );
+      },
     ),
     GoRoute(
       path: '/dashboard',

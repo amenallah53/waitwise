@@ -99,7 +99,7 @@ abstract class SessionModel {
   }*/
 
   factory SessionModel.fromJson(Map<String, dynamic> json) {
-    final type = json['session_type'] as String;
+    final type = json['session_type']?.toString() ?? 'task'; // fallback to task
 
     final rawAi = json['ai_content'];
     final rawUser = json['user_response'];
@@ -108,10 +108,10 @@ abstract class SessionModel {
     Map<String, dynamic> aiContent;
     if (rawAi is String) {
       aiContent = jsonDecode(rawAi);
-    } else if (rawAi is Map<String, dynamic>) {
-      aiContent = rawAi;
+    } else if (rawAi is Map) {
+      aiContent = Map<String, dynamic>.from(rawAi);
     } else {
-      throw Exception('Invalid ai_content format');
+      aiContent = {'prompt': 'Focus session'}; // Fallback
     }
 
     // Handle nullable user_response safely
@@ -120,10 +120,10 @@ abstract class SessionModel {
       userResponse = null;
     } else if (rawUser is String) {
       userResponse = jsonDecode(rawUser);
-    } else if (rawUser is Map<String, dynamic>) {
-      userResponse = rawUser;
+    } else if (rawUser is Map) {
+      userResponse = Map<String, dynamic>.from(rawUser);
     } else {
-      throw Exception('Invalid user_response format');
+      userResponse = null; // Fallback
     }
 
     final common = _CommonFields.fromJson(json);
@@ -221,14 +221,18 @@ class _CommonFields {
   });
 
   factory _CommonFields.fromJson(Map<String, dynamic> json) => _CommonFields(
-    id: json['id'] as String?,
-    userId: json['user_id'] as String,
-    title: json['title'] as String?,
-    context: json['context'] as String?,
-    durationMinutes: json['duration_minutes'] as int,
-    userMood: json['user_mood'] as String?,
-    completed: json['completed'] as bool? ?? false,
-    createdAt: DateTime.parse(json['created_at'] as String),
+    id: json['id']?.toString(),
+    userId: json['user_id']?.toString() ?? 'unknown',
+    title: json['title']?.toString(),
+    context: json['context']?.toString(),
+    durationMinutes: json['duration_minutes'] != null 
+        ? int.tryParse(json['duration_minutes'].toString()) ?? 5 
+        : 5,
+    userMood: json['user_mood']?.toString(),
+    completed: json['completed'] == true || json['completed'] == 'true',
+    createdAt: json['created_at'] != null 
+        ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now() 
+        : DateTime.now(),
   );
 }
 
@@ -268,7 +272,7 @@ class ReflectionContent {
   const ReflectionContent({required this.prompt});
 
   factory ReflectionContent.fromJson(Map<String, dynamic> json) =>
-      ReflectionContent(prompt: json['prompt'] as String);
+      ReflectionContent(prompt: json['prompt']?.toString() ?? 'Take a moment to reflect.');
 
   Map<String, dynamic> toJson() => {'type': 'reflection', 'prompt': prompt};
 }
@@ -327,9 +331,9 @@ class TaskStep {
   });
 
   factory TaskStep.fromJson(Map<String, dynamic> json) => TaskStep(
-    id: json['id'] as int,
-    text: json['text'] as String,
-    isComplete: json['is_complete'] as bool? ?? false,
+    id: json['id'] != null ? int.tryParse(json['id'].toString()) ?? 0 : 0,
+    text: json['text']?.toString() ?? 'Task step',
+    isComplete: json['is_complete'] == true || json['is_complete'] == 'true',
   );
 
   Map<String, dynamic> toJson() => {
@@ -351,10 +355,12 @@ class TaskContent {
   const TaskContent({required this.prompt, required this.steps});
 
   factory TaskContent.fromJson(Map<String, dynamic> json) => TaskContent(
-    prompt: json['prompt'] as String,
-    steps: (json['steps'] as List)
-        .map((s) => TaskStep.fromJson(s as Map<String, dynamic>))
-        .toList(),
+    prompt: json['prompt']?.toString() ?? 'Here are some quick tasks:',
+    steps: json['steps'] != null 
+        ? (json['steps'] as List)
+            .map((s) => TaskStep.fromJson(Map<String, dynamic>.from(s as Map)))
+            .toList()
+        : [],
   );
 
   Map<String, dynamic> toJson() => {
@@ -428,10 +434,12 @@ class QuizQuestion {
   });
 
   factory QuizQuestion.fromJson(Map<String, dynamic> json) => QuizQuestion(
-    question: json['question'] as String,
-    options: List<String>.from(json['options'] as List),
-    correctIndex: json['correct_index'] as int,
-    explanation: json['explanation'] as String,
+    question: json['question']?.toString() ?? 'Question?',
+    options: json['options'] != null 
+        ? List<String>.from((json['options'] as List).map((e) => e.toString())) 
+        : ['Option A', 'Option B'],
+    correctIndex: json['correct_index'] != null ? int.tryParse(json['correct_index'].toString()) ?? 0 : 0,
+    explanation: json['explanation']?.toString() ?? '',
   );
 
   Map<String, dynamic> toJson() => {
@@ -449,9 +457,11 @@ class QuizContent {
   const QuizContent({required this.questions});
 
   factory QuizContent.fromJson(Map<String, dynamic> json) => QuizContent(
-    questions: (json['questions'] as List)
-        .map((q) => QuizQuestion.fromJson(q as Map<String, dynamic>))
-        .toList(),
+    questions: json['questions'] != null 
+        ? (json['questions'] as List)
+            .map((q) => QuizQuestion.fromJson(Map<String, dynamic>.from(q as Map)))
+            .toList()
+        : [],
   );
 
   Map<String, dynamic> toJson() => {

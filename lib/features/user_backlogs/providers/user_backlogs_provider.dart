@@ -184,7 +184,9 @@ final backlogProvider = StateNotifierProvider<BacklogNotifier, BacklogState>((
 
   // Trigger load immediately
   final userId = currentUser?.id; // however you get it
-  notifier.load(userId!);
+  if (userId != null) {
+    notifier.load(userId);
+  }
 
   return notifier;
 });

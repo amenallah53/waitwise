@@ -9,8 +9,17 @@ import 'package:waitwise/features/dashboard/providers/dashboard_provider.dart';
 import 'package:waitwise/features/session_complete/providers/session_complete_provider.dart';
 import 'package:waitwise/features/user_backlogs/providers/user_backlogs_provider.dart';
 
+import 'package:waitwise/data/datasources/sessions_service.dart';
+
 class SessionCompleteScreen extends ConsumerStatefulWidget {
-  const SessionCompleteScreen({super.key});
+  final String? sessionId;
+  final int durationMinutes;
+
+  const SessionCompleteScreen({
+    super.key,
+    this.sessionId,
+    this.durationMinutes = 0,
+  });
 
   @override
   ConsumerState<SessionCompleteScreen> createState() =>
@@ -25,19 +34,15 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
   void initState() {
     super.initState();
     _localController = TextEditingController();
+    if (widget.sessionId != null) {
+      updateSessionCompletion(widget.sessionId!, true);
+    }
   }
 
   @override
   void dispose() {
     _localController.dispose();
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final extra = GoRouterState.of(context).extra as Map<String, dynamic>?;
-    _durationMinutes = extra?['durationMinutes'] ?? 0;
   }
 
   @override
@@ -107,7 +112,7 @@ class _SessionCompleteScreenState extends ConsumerState<SessionCompleteScreen> {
               const SizedBox(height: 28),
 
               Text(
-                "$_durationMinutes minutes well spent!",
+                "${widget.durationMinutes} minutes well spent!",
                 textAlign: TextAlign.center,
                 style: theme.textTheme.headlineLarge?.copyWith(
                   fontWeight: FontWeight.w800,
