@@ -24,27 +24,30 @@ class CustomBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     //final theme = Theme.of(context);
 
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _item(context, Icons.home, "Home", 0),
-          _item(context, Icons.grid_view_rounded, "Dashboard", 1),
-          _item(context, Icons.access_time, "Backlog", 2),
-        ],
+    return SafeArea(
+      bottom: true,
+      child: Container(
+        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(32),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _item(context, Icons.home, "Home", 0),
+            _item(context, Icons.grid_view_rounded, "Dashboard", 1),
+            _item(context, Icons.access_time, "Backlog", 2),
+          ],
+        ),
       ),
     );
   }
