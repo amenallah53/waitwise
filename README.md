@@ -75,6 +75,32 @@ When the user taps "Start my session", the app POSTs to an n8n webhook. The work
 <img width="1766" height="712" alt="image" src="https://github.com/user-attachments/assets/e3c32055-b722-4263-b2c6-76845416c188" />
 
 ---
+
+## Offline Session Prefetch Workflow
+
+To avoid making the user wait for AI generation every time they open the app, WaitWise includes a second dedicated n8n workflow responsible for offline session prefetching.
+
+This workflow is triggered:
+
+- after onboarding completes
+- after a new backlog item is added
+- whenever the local offline session pool becomes low
+
+Instead of generating a single session on demand, the workflow generates a batch of personalized sessions ahead of time and stores them locally on the device.
+
+### Workflow Steps
+
+1. **Webhook** — receives user interests, backlog items, current offline pool size, and requested session count
+2. **Planning Agent** — an LLM decides what kinds of sessions should be generated (reflection, task, quiz) and selects diverse topics based on the user's context
+3. **Split & Route** — the generated plan is split into individual session jobs and routed by session type
+4. **Session Generators** — specialized AI prompts generate complete session payloads for each type
+5. **Aggregation** — all generated sessions are merged back into a single array
+6. **Respond to Webhook** — Flutter receives the prefetched sessions and stores them locally using `SharedPreferences`
+
+<img width="1377" height="660" alt="Capture d’écran 2026-05-11 010129" src="https://github.com/user-attachments/assets/6aee4349-5f88-4494-bf37-e1c61e9735e5" />
+
+This architecture allows most sessions to load instantly even without internet access, while keeping AI generation fully dynamic and personalized.
+---
 ## Sequence diagram
 <img width="505" height="336" alt="sequence_diagram_waitwise" src="https://github.com/user-attachments/assets/b9b05321-0bb8-405a-8b54-48f37aee303e" />
 
